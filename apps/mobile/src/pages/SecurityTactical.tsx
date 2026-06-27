@@ -1,10 +1,20 @@
+import { useState } from 'react'
 import { BentoCard } from '../components/ui/BentoCard'
 import { MapPlaceholder } from '../components/ui/MapPlaceholder'
 import { ActionButton } from '../components/ui/ActionButton'
+import { useCamera } from '../hooks/useCamera'
 
 const LAGOS: { lat: number; lng: number } = { lat: 6.4541, lng: 3.3947 }
 
 export function SecurityTactical() {
+  const { takePhoto } = useCamera()
+  const [bodyCamImage, setBodyCamImage] = useState<string | null>(null)
+
+  const handleBodyCam = async () => {
+    const photo = await takePhoto()
+    if (photo) setBodyCamImage(photo)
+  }
+
   return (
     <div className="flex flex-col gap-6 px-[var(--spacing-margin-mobile)] py-6">
       <div>
@@ -28,10 +38,16 @@ export function SecurityTactical() {
           <span className="material-symbols-outlined text-primary">videocam</span>
           <span className="text-sm font-bold text-on-surface">Body Cam — Unit 14</span>
         </div>
-        <div className="h-32 bg-surface-container rounded flex items-center justify-center">
-          <span className="material-symbols-outlined text-4xl text-on-surface-variant">videocam_off</span>
-        </div>
-        <p className="text-xs text-on-surface-variant mt-2">Camera feed available on scene arrival</p>
+        {bodyCamImage ? (
+          <img src={bodyCamImage} alt="Body cam" className="w-full h-32 object-cover rounded" />
+        ) : (
+          <div className="h-32 bg-surface-container rounded flex items-center justify-center">
+            <span className="material-symbols-outlined text-4xl text-on-surface-variant">videocam_off</span>
+          </div>
+        )}
+        <button onClick={handleBodyCam} className="mt-2 text-sm font-bold text-primary uppercase">
+          Capture Body Cam
+        </button>
       </div>
 
       <div className="flex gap-3">

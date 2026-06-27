@@ -16,6 +16,6 @@ describe('SecurityTactical', () => {
 
   it('renders body cam section', () => {
     render(<BrowserRouter><SecurityTactical /></BrowserRouter>)
-    expect(screen.getByText(/Body Cam/i)).toBeInTheDocument()
+    expect(screen.getByText(/Body Cam — Unit 14/i)).toBeInTheDocument()
   })
 })

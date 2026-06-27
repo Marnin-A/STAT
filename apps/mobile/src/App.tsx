@@ -1,7 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AppLayout } from './components/layout/AppLayout'
 import { Dashboard } from './pages/Dashboard'
+import { TriageList } from './pages/TriageList'
 import { TriageTracking } from './pages/TriageTracking'
+import { MedicalIncident } from './pages/MedicalIncident'
+import { SecurityTactical } from './pages/SecurityTactical'
+import { FireHazard } from './pages/FireHazard'
+import { DispatchMap } from './pages/DispatchMap'
+import { HospitalPreArrival } from './pages/HospitalPreArrival'
 
 function App() {
   return (
@@ -9,13 +15,13 @@ function App() {
       <AppLayout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/triage" element={<div className="p-4">Triage List (Phase 3)</div>} />
+          <Route path="/triage" element={<TriageList />} />
           <Route path="/triage/:id" element={<TriageTracking />} />
-          <Route path="/triage/medical/:id" element={<div className="p-4">Medical Incident (Phase 3)</div>} />
-          <Route path="/dispatch" element={<div className="p-4">Security Tactical (Phase 3)</div>} />
-          <Route path="/dispatch/fire/:id" element={<div className="p-4">Fire Hazard (Phase 3)</div>} />
-          <Route path="/dispatch/map" element={<div className="p-4">Dispatch Map (Phase 3)</div>} />
-          <Route path="/hospital" element={<div className="p-4">Hospital Pre-Arrival (Phase 4)</div>} />
+          <Route path="/triage/medical/:id" element={<MedicalIncident />} />
+          <Route path="/dispatch" element={<SecurityTactical />} />
+          <Route path="/dispatch/fire/:id" element={<FireHazard />} />
+          <Route path="/dispatch/map" element={<DispatchMap />} />
+          <Route path="/hospital" element={<HospitalPreArrival />} />
         </Routes>
       </AppLayout>
     </BrowserRouter>

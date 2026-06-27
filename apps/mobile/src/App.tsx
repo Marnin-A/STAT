@@ -1,14 +1,16 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AppLayout } from './components/layout/AppLayout'
+import { Dashboard } from './pages/Dashboard'
+import { TriageTracking } from './pages/TriageTracking'
 
 function App() {
   return (
     <BrowserRouter>
       <AppLayout>
         <Routes>
-          <Route path="/" element={<div className="p-4">Dashboard (Phase 2)</div>} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/triage" element={<div className="p-4">Triage List (Phase 3)</div>} />
-          <Route path="/triage/:id" element={<div className="p-4">Triage Tracking (Phase 2)</div>} />
+          <Route path="/triage/:id" element={<TriageTracking />} />
           <Route path="/triage/medical/:id" element={<div className="p-4">Medical Incident (Phase 3)</div>} />
           <Route path="/dispatch" element={<div className="p-4">Security Tactical (Phase 3)</div>} />
           <Route path="/dispatch/fire/:id" element={<div className="p-4">Fire Hazard (Phase 3)</div>} />

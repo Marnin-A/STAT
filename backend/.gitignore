@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.log
+.env
+.env.*
+
+# test / build artifacts
+coverage/
+*.tsbuildinfo
+
+# OS / editor
+.DS_Store
+.idea/
+*.local

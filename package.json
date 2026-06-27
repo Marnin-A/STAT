@@ -1,0 +1,15 @@
+{
+  "name": "stat-mobile",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @stat/mobile dev",
+    "build": "pnpm --filter @stat/mobile build",
+    "test": "pnpm --filter @stat/mobile test",
+    "cap:open": "pnpm --filter @stat/mobile cap:open"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

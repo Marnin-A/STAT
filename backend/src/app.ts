@@ -15,6 +15,11 @@ import { rankAvailableUnits } from "./dispatch/availability.js";
 import { InMemoryEventBus, agencyChannel, incidentChannel, ALL_CHANNEL, type EventBus } from "./realtime/bus.js";
 import { PublishingEventStore } from "./realtime/publishing-event-store.js";
 import { LagMetrics } from "./realtime/lag-metrics.js";
+import { TriageService } from "./triage/service.js";
+import { getQuestions } from "./triage/questionnaire.js";
+import type { TriageAnswer } from "./triage/scoring.js";
+import { TelemetryService, type TelemetryInput } from "./telemetry/service.js";
+import { ReplayService, type ReplayCommand } from "./sync/replay.js";
 import {
   resolvePrincipal,
   requireAuthenticated,
@@ -26,6 +31,9 @@ export interface AppDeps {
   incidents: IncidentService;
   dispatch: DispatchService;
   units: UnitRegistry;
+  triage: TriageService;
+  telemetry: TelemetryService;
+  replay: ReplayService;
   idempotency: IdempotencyStore;
   bus: EventBus;
   lag: LagMetrics;
@@ -41,11 +49,17 @@ export function defaultDeps(idGen: IdGen = randomUUID, clock: Clock = () => new 
   const events = new PublishingEventStore(new InMemoryEventStore(), bus, lag);
   const incidents = new IncidentService(events, new InMemoryRateLimitStore(), idGen, clock);
   const units = new InMemoryUnitRegistry();
+  const triage = new TriageService(events, incidents, idGen, clock);
+  const telemetry = new TelemetryService(events, incidents, idGen, clock);
+  const idempotency = new InMemoryIdempotencyStore();
   return {
     incidents,
     dispatch: new DispatchService(events, units, new InMemoryDispatchStore(), incidents, idGen, clock),
     units,
-    idempotency: new InMemoryIdempotencyStore(),
+    triage,
+    telemetry,
+    replay: new ReplayService(incidents, triage, telemetry, events, idempotency),
+    idempotency,
     bus,
     lag,
     idGen,
@@ -57,7 +71,7 @@ const UNIT_TYPES: ReadonlySet<string> = new Set(["medical", "security", "fire"])
 
 export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
   const app = Fastify({ logger: false });
-  const { incidents, dispatch, units, idempotency, bus, lag, idGen, clock } = deps;
+  const { incidents, dispatch, units, triage, telemetry, replay, idempotency, bus, lag, idGen, clock } = deps;
   app.register(websocket);
 
   app.setErrorHandler((err, _req, reply) => {
@@ -297,6 +311,94 @@ export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
       off();
       reply.raw.end();
     });
+  });
+
+  // GET /triage/questions?type= — protocol questionnaire.
+  app.get("/triage/questions", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    const { type } = req.query as Record<string, string>;
+    if (!type) throw new BadRequestError("type query param required");
+    return reply.send(getQuestions(type)); // 400 on unknown type
+  });
+
+  // POST /incidents/:id/triage — submit answers, get deterministic score.
+  app.post("/incidents/:id/triage", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["responder", "dispatcher", "admin"]);
+
+    const { id } = req.params as { id: string };
+    const rm = await incidents.get(id);
+    if (!rm) throw new NotFoundError("incident not found");
+    assertAgencyAccess(principal, rm);
+
+    const b = (req.body ?? {}) as Record<string, unknown>;
+    if (!Array.isArray(b.answers)) throw new BadRequestError("answers array required");
+    const occurredAt = typeof b.occurredAt === "string" ? b.occurredAt : clock();
+
+    const score = await triage.submitAnswers(id, b.answers as TriageAnswer[], principal.userId!, occurredAt);
+    return reply.status(201).send(score);
+  });
+
+  // GET /incidents/:id/triage — questions + latest answers + score.
+  app.get("/incidents/:id/triage", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    const { id } = req.params as { id: string };
+    const rm = await incidents.get(id);
+    if (!rm) throw new NotFoundError("incident not found");
+    assertAgencyAccess(principal, rm);
+    return reply.send(await triage.getTriage(id));
+  });
+
+  // POST /incidents/:id/vitals — manual telemetry entry (v1: no devices).
+  app.post("/incidents/:id/vitals", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["responder", "dispatcher", "admin"]);
+
+    const { id } = req.params as { id: string };
+    const rm = await incidents.get(id);
+    if (!rm) throw new NotFoundError("incident not found");
+    assertAgencyAccess(principal, rm);
+
+    await telemetry.record(id, (req.body ?? {}) as unknown as TelemetryInput, principal.userId!);
+    return reply.status(201).send({ ok: true });
+  });
+
+  // GET /incidents/:id/vitals?limit= — latest-first samples (hospital view).
+  app.get("/incidents/:id/vitals", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    const { id } = req.params as { id: string };
+    const rm = await incidents.get(id);
+    if (!rm) throw new NotFoundError("incident not found");
+    assertAgencyAccess(principal, rm);
+    const q = req.query as Record<string, string>;
+    return reply.send(await telemetry.latest(id, q.limit ? Number(q.limit) : undefined));
+  });
+
+  // POST /incidents/:id/replay — drain a responder's offline queue.
+  app.post("/incidents/:id/replay", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["responder", "dispatcher", "admin"]);
+
+    const { id } = req.params as { id: string };
+    const rm = await incidents.get(id);
+    if (!rm) throw new NotFoundError("incident not found");
+    assertAgencyAccess(principal, rm);
+
+    const b = (req.body ?? {}) as Record<string, unknown>;
+    if (!Array.isArray(b.commands)) throw new BadRequestError("commands array required");
+    for (const c of b.commands as Record<string, unknown>[]) {
+      if (typeof c.key !== "string" || typeof c.occurredAt !== "string") {
+        throw new BadRequestError("each command needs key and occurredAt");
+      }
+    }
+
+    return reply.send(await replay.replay(id, b.commands as ReplayCommand[], principal.userId!));
   });
 
   // GET /metrics/realtime — publish-lag counters.

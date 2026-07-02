@@ -12,7 +12,7 @@ pnpm build
 pnpm dev         # tsx watch, :3000
 ```
 
-## Status: Phase 3 (real-time, in-memory)
+## Status: Phase 4 (triage + telemetry, in-memory)
 
 Domain core is built and TDD-covered. Persistence is in-memory (ports defined);
 Supabase Postgres + Redis + Better Auth swap in at the ports without touching
@@ -28,6 +28,13 @@ domain logic.
 - `realtime/` — event bus port (in-memory now, Redis pub/sub later),
   publishing event-store decorator (every append fans out to
   `incident:{id}` / `agency:{id}` / firehose channels), publish-lag metrics.
+- `triage/` — protocol questionnaire (medical/security/fire), deterministic
+  rules scoring (<100 ms, no LLM in the loop), triage service (submit folds
+  latest-wins; first submit moves incident to `triaging`).
+- `telemetry/` — manual vitals entry on the incident event log (range
+  validation; latest-first fold for the hospital view; live via bus).
+- `sync/` — offline replay: occurredAt-ordered apply, per-command idempotency
+  keys, one failure never stops the batch.
 - `identity/` — principal + RBAC/agency guards (**stub**: reads `x-user-id` /
   `x-role` / `x-agency-id` headers; Better Auth replaces `resolvePrincipal`).
 - `shared/` — event envelope, idempotency, errors.
@@ -46,6 +53,12 @@ domain logic.
 | POST | `/incidents/:id/dispatch` | dispatcher/admin, `expectedVersion` |
 | POST | `/dispatches/:id/accept` | responder/admin |
 | POST | `/dispatches/:id/reject` | responder/admin |
+| GET | `/triage/questions?type=` | authenticated |
+| POST | `/incidents/:id/triage` | responder/dispatcher/admin |
+| GET | `/incidents/:id/triage` | authenticated, agency-scoped |
+| POST | `/incidents/:id/vitals` | responder/dispatcher/admin |
+| GET | `/incidents/:id/vitals?limit=` | authenticated, agency-scoped |
+| POST | `/incidents/:id/replay` | responder/dispatcher/admin |
 | WS | `/ws/incidents/:id?user=&role=&agency=` | query-param auth stub; close 4001/4003/4004 |
 | GET (SSE) | `/dashboard/stream` | dispatcher/hospital_staff/admin; agency-scoped, admin = firehose |
 | GET | `/metrics/realtime` | dispatcher/hospital_staff/admin |
@@ -62,9 +75,9 @@ domain logic.
 - Reject frees the unit (`UnitUnassigned` event) so it can be re-dispatched.
 - Accept/reject only from `pending` -> 409 `DISPATCH_CONFLICT` otherwise.
 
-## Next (Phase 4)
+## Next (Phase 5)
 
-Triage + telemetry: questionnaire API, deterministic scoring, telemetry
-ingest, latest-vitals projection, offline replay endpoint. Still pending from
-earlier phases: Supabase migrations + Postgres impls at the ports; Redis bus
-impl; Better Auth wiring.
+Hospital handoff + compliance hardening: hospital routing, pre-arrival alert
+(dashboard/webhook), patient-data access audit, notification provider
+(Africa's Talking + FCM), 90-day vitals retention. Still pending: Supabase
+migrations + Postgres impls at the ports; Redis bus impl; Better Auth wiring.

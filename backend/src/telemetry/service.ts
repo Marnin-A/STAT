@@ -21,6 +21,9 @@ export interface TelemetrySample extends TelemetryInput {
 // v1 is manual responder entry (see future-features.md for device streams),
 // so samples ride the incident event log: PHI-auditable and fanned out live
 // by the publishing store for the hospital pre-arrival view.
+const RETENTION_DAYS = 90;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 const VITAL_RANGES: Record<string, [number, number]> = {
   hr: [20, 250],
   spo2: [50, 100],
@@ -78,15 +81,18 @@ export class TelemetryService {
   }
 
   // Latest-first fold (design decision 4: latest valid sample wins for live
-  // view, full history stays in the log).
+  // view, full history stays in the log). Read-side retention hides samples
+  // past 90 days (NDPA); the Postgres impl adds a hard-delete job.
   async latest(incidentId: string, limit = 20): Promise<TelemetrySample[]> {
     const rm = await this.incidents.get(incidentId);
     if (!rm) throw new NotFoundError("incident not found");
 
+    const cutoff = Date.parse(this.clock()) - RETENTION_DAYS * DAY_MS;
     const samples: TelemetrySample[] = [];
     for (const e of await this.events.load(incidentId)) {
       if (e.type !== "TelemetryRecorded") continue;
       const p = e.payload as unknown as TelemetryInput;
+      if (Date.parse(p.capturedAt) < cutoff) continue; // expired
       samples.push({ ...p, id: e.eventId, incidentId, recordedAt: e.recordedAt });
     }
     return samples.reverse().slice(0, limit);

@@ -1,4 +1,5 @@
 import Fastify, { type FastifyInstance } from "fastify";
+import websocket from "@fastify/websocket";
 import { randomUUID } from "node:crypto";
 import type { Clock, IdGen } from "./shared/event.js";
 import { DomainError, BadRequestError, NotFoundError } from "./shared/errors.js";
@@ -11,6 +12,9 @@ import { DispatchService } from "./dispatch/service.js";
 import { InMemoryUnitRegistry, type Unit, type UnitRegistry, type UnitType } from "./dispatch/unit-registry.js";
 import { InMemoryDispatchStore } from "./dispatch/dispatch-store.js";
 import { rankAvailableUnits } from "./dispatch/availability.js";
+import { InMemoryEventBus, agencyChannel, incidentChannel, ALL_CHANNEL, type EventBus } from "./realtime/bus.js";
+import { PublishingEventStore } from "./realtime/publishing-event-store.js";
+import { LagMetrics } from "./realtime/lag-metrics.js";
 import {
   resolvePrincipal,
   requireAuthenticated,
@@ -23,13 +27,18 @@ export interface AppDeps {
   dispatch: DispatchService;
   units: UnitRegistry;
   idempotency: IdempotencyStore;
+  bus: EventBus;
+  lag: LagMetrics;
   idGen: IdGen;
   clock: Clock;
 }
 
-// Wire default in-memory deps (Phase 1/2). Supabase/Redis impls swap in here.
+// Wire default in-memory deps (Phase 1-3). Supabase/Redis impls swap in here.
 export function defaultDeps(idGen: IdGen = randomUUID, clock: Clock = () => new Date().toISOString()): AppDeps {
-  const events = new InMemoryEventStore();
+  const bus = new InMemoryEventBus();
+  const lag = new LagMetrics();
+  // Every append (SOS, status, dispatch) fans out through the bus.
+  const events = new PublishingEventStore(new InMemoryEventStore(), bus, lag);
   const incidents = new IncidentService(events, new InMemoryRateLimitStore(), idGen, clock);
   const units = new InMemoryUnitRegistry();
   return {
@@ -37,6 +46,8 @@ export function defaultDeps(idGen: IdGen = randomUUID, clock: Clock = () => new 
     dispatch: new DispatchService(events, units, new InMemoryDispatchStore(), incidents, idGen, clock),
     units,
     idempotency: new InMemoryIdempotencyStore(),
+    bus,
+    lag,
     idGen,
     clock,
   };
@@ -46,7 +57,8 @@ const UNIT_TYPES: ReadonlySet<string> = new Set(["medical", "security", "fire"])
 
 export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
   const app = Fastify({ logger: false });
-  const { incidents, dispatch, units, idempotency, idGen, clock } = deps;
+  const { incidents, dispatch, units, idempotency, bus, lag, idGen, clock } = deps;
+  app.register(websocket);
 
   app.setErrorHandler((err, _req, reply) => {
     if (err instanceof DomainError) {
@@ -228,6 +240,71 @@ export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
     assertRole(principal, ["responder", "admin"]);
     const { id } = req.params as { id: string };
     return reply.send(await dispatch.rejectDispatch(id, principal.userId!));
+  });
+
+  // GET /ws/incidents/:id — WebSocket incident channel. Browsers cannot set
+  // headers on the WS handshake, so the auth stub reads query params here
+  // (?user=&role=&agency=); Better Auth swaps in a query token later.
+  // App close codes: 4001 unauthorized, 4003 forbidden, 4004 not found.
+  app.register(async (scope) => {
+    scope.get("/ws/incidents/:id", { websocket: true }, async (socket, req) => {
+      const q = req.query as Record<string, string>;
+      const principal = resolvePrincipal({
+        "x-user-id": q.user,
+        "x-role": q.role,
+        "x-agency-id": q.agency,
+      });
+      if (!principal.userId) return socket.close(4001, "unauthorized");
+
+      const { id } = req.params as { id: string };
+      const rm = await incidents.get(id);
+      if (!rm) return socket.close(4004, "incident not found");
+      try {
+        assertAgencyAccess(principal, rm);
+      } catch {
+        return socket.close(4003, "forbidden");
+      }
+
+      const off = bus.subscribe(incidentChannel(id), (e) => {
+        socket.send(JSON.stringify(e));
+      });
+      socket.on("close", off);
+    });
+  });
+
+  // GET /dashboard/stream — SSE feed. Agency-scoped; admin gets the firehose.
+  app.get("/dashboard/stream", (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["dispatcher", "hospital_staff", "admin"]);
+
+    reply.hijack();
+    reply.raw.writeHead(200, {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      connection: "keep-alive",
+    });
+    reply.raw.write(":connected\n\n");
+
+    const channel =
+      principal.role === "admin" || !principal.agencyId
+        ? ALL_CHANNEL
+        : agencyChannel(principal.agencyId);
+    const off = bus.subscribe(channel, (e) => {
+      reply.raw.write(`data: ${JSON.stringify(e)}\n\n`);
+    });
+    req.raw.on("close", () => {
+      off();
+      reply.raw.end();
+    });
+  });
+
+  // GET /metrics/realtime — publish-lag counters.
+  app.get("/metrics/realtime", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["dispatcher", "hospital_staff", "admin"]);
+    return reply.send(lag.snapshot());
   });
 
   return app;

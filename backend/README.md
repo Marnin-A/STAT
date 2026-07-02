@@ -12,7 +12,7 @@ pnpm build
 pnpm dev         # tsx watch, :3000
 ```
 
-## Status: Phase 2 (dispatch core, in-memory)
+## Status: Phase 3 (real-time, in-memory)
 
 Domain core is built and TDD-covered. Persistence is in-memory (ports defined);
 Supabase Postgres + Redis + Better Auth swap in at the ports without touching
@@ -25,6 +25,9 @@ domain logic.
 - `dispatch/` — unit registry (atomic reserve/release), availability ranking
   (haversine + v1 score: type filter, same-agency preference, nearest first),
   dispatch store, dispatch service (assign / accept / reject).
+- `realtime/` — event bus port (in-memory now, Redis pub/sub later),
+  publishing event-store decorator (every append fans out to
+  `incident:{id}` / `agency:{id}` / firehose channels), publish-lag metrics.
 - `identity/` — principal + RBAC/agency guards (**stub**: reads `x-user-id` /
   `x-role` / `x-agency-id` headers; Better Auth replaces `resolvePrincipal`).
 - `shared/` — event envelope, idempotency, errors.
@@ -43,6 +46,9 @@ domain logic.
 | POST | `/incidents/:id/dispatch` | dispatcher/admin, `expectedVersion` |
 | POST | `/dispatches/:id/accept` | responder/admin |
 | POST | `/dispatches/:id/reject` | responder/admin |
+| WS | `/ws/incidents/:id?user=&role=&agency=` | query-param auth stub; close 4001/4003/4004 |
+| GET (SSE) | `/dashboard/stream` | dispatcher/hospital_staff/admin; agency-scoped, admin = firehose |
+| GET | `/metrics/realtime` | dispatcher/hospital_staff/admin |
 
 ### Invariants enforced
 
@@ -56,9 +62,9 @@ domain logic.
 - Reject frees the unit (`UnitUnassigned` event) so it can be re-dispatched.
 - Accept/reject only from `pending` -> 409 `DISPATCH_CONFLICT` otherwise.
 
-## Next (Phase 3)
+## Next (Phase 4)
 
-Real-time: WebSocket incident channel, SSE dashboard feed, Redis pub/sub,
-projection lag metrics. Still pending from earlier phases: Supabase migrations
-(incident_events, incident_read_model, sos_rate_limit, units, dispatches) +
-Postgres impls at the ports; Better Auth wiring.
+Triage + telemetry: questionnaire API, deterministic scoring, telemetry
+ingest, latest-vitals projection, offline replay endpoint. Still pending from
+earlier phases: Supabase migrations + Postgres impls at the ports; Redis bus
+impl; Better Auth wiring.

@@ -12,7 +12,7 @@ pnpm build
 pnpm dev         # tsx watch, :3000
 ```
 
-## Status: Phase 1 (in-memory)
+## Status: Phase 2 (dispatch core, in-memory)
 
 Domain core is built and TDD-covered. Persistence is in-memory (ports defined);
 Supabase Postgres + Redis + Better Auth swap in at the ports without touching
@@ -22,6 +22,9 @@ domain logic.
 
 - `incident/` — event store, projection (read model), state machine, abuse
   scoring, rate limit, service.
+- `dispatch/` — unit registry (atomic reserve/release), availability ranking
+  (haversine + v1 score: type filter, same-agency preference, nearest first),
+  dispatch store, dispatch service (assign / accept / reject).
 - `identity/` — principal + RBAC/agency guards (**stub**: reads `x-user-id` /
   `x-role` / `x-agency-id` headers; Better Auth replaces `resolvePrincipal`).
 - `shared/` — event envelope, idempotency, errors.
@@ -34,6 +37,12 @@ domain logic.
 | GET | `/incidents?status=` | authenticated, agency-scoped |
 | GET | `/incidents/:id` | authenticated, agency-scoped |
 | POST | `/incidents/:id/status` | dispatcher/responder/admin, `expectedVersion` |
+| POST | `/units` | dispatcher/admin |
+| POST | `/units/:id/location` | responder/dispatcher/admin |
+| GET | `/units/available?lat=&lng=&type=&limit=` | authenticated, ranked |
+| POST | `/incidents/:id/dispatch` | dispatcher/admin, `expectedVersion` |
+| POST | `/dispatches/:id/accept` | responder/admin |
+| POST | `/dispatches/:id/reject` | responder/admin |
 
 ### Invariants enforced
 
@@ -43,8 +52,13 @@ domain logic.
 - Idempotency: duplicate key -> original response.
 - RBAC + per-agency scope: wrong role/agency -> 403.
 - SOS abuse fail-open: accept + flag; hard-block obvious spam -> 429.
+- Double assignment blocked: unit reserve is atomic -> 409 `UNIT_UNAVAILABLE`.
+- Reject frees the unit (`UnitUnassigned` event) so it can be re-dispatched.
+- Accept/reject only from `pending` -> 409 `DISPATCH_CONFLICT` otherwise.
 
-## Next (Phase 2)
+## Next (Phase 3)
 
-Supabase migrations (incident_events, incident_read_model, sos_rate_limit) +
-Postgres EventStore/RateLimit impls; Better Auth wiring; dispatch core.
+Real-time: WebSocket incident channel, SSE dashboard feed, Redis pub/sub,
+projection lag metrics. Still pending from earlier phases: Supabase migrations
+(incident_events, incident_read_model, sos_rate_limit, units, dispatches) +
+Postgres impls at the ports; Better Auth wiring.

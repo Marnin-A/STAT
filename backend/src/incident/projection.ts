@@ -56,6 +56,9 @@ export function projectIncident(events: DomainEvent[]): IncidentReadModel | null
       case "UnitAssigned":
         rm.assignedUnitIds = [...rm.assignedUnitIds, String(e.payload.unitId)];
         break;
+      case "UnitUnassigned":
+        rm.assignedUnitIds = rm.assignedUnitIds.filter((id) => id !== String(e.payload.unitId));
+        break;
       case "HospitalSelected":
         rm.hospitalId = String(e.payload.hospitalId);
         break;

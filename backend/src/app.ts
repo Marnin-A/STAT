@@ -7,6 +7,10 @@ import { InMemoryEventStore } from "./incident/event-store.js";
 import { InMemoryRateLimitStore } from "./incident/rate-limit.js";
 import { IncidentService } from "./incident/service.js";
 import type { IncidentStatus } from "./incident/state-machine.js";
+import { DispatchService } from "./dispatch/service.js";
+import { InMemoryUnitRegistry, type Unit, type UnitRegistry, type UnitType } from "./dispatch/unit-registry.js";
+import { InMemoryDispatchStore } from "./dispatch/dispatch-store.js";
+import { rankAvailableUnits } from "./dispatch/availability.js";
 import {
   resolvePrincipal,
   requireAuthenticated,
@@ -16,25 +20,33 @@ import {
 
 export interface AppDeps {
   incidents: IncidentService;
+  dispatch: DispatchService;
+  units: UnitRegistry;
   idempotency: IdempotencyStore;
+  idGen: IdGen;
+  clock: Clock;
 }
 
-// Wire default in-memory deps (Phase 1). Supabase/Redis impls swap in here.
+// Wire default in-memory deps (Phase 1/2). Supabase/Redis impls swap in here.
 export function defaultDeps(idGen: IdGen = randomUUID, clock: Clock = () => new Date().toISOString()): AppDeps {
+  const events = new InMemoryEventStore();
+  const incidents = new IncidentService(events, new InMemoryRateLimitStore(), idGen, clock);
+  const units = new InMemoryUnitRegistry();
   return {
-    incidents: new IncidentService(
-      new InMemoryEventStore(),
-      new InMemoryRateLimitStore(),
-      idGen,
-      clock,
-    ),
+    incidents,
+    dispatch: new DispatchService(events, units, new InMemoryDispatchStore(), incidents, idGen, clock),
+    units,
     idempotency: new InMemoryIdempotencyStore(),
+    idGen,
+    clock,
   };
 }
 
+const UNIT_TYPES: ReadonlySet<string> = new Set(["medical", "security", "fire"]);
+
 export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
   const app = Fastify({ logger: false });
-  const { incidents, idempotency } = deps;
+  const { incidents, dispatch, units, idempotency, idGen, clock } = deps;
 
   app.setErrorHandler((err, _req, reply) => {
     if (err instanceof DomainError) {
@@ -117,6 +129,105 @@ export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
       principal.userId!,
     );
     return reply.send(await incidents.get(id));
+  });
+
+  // POST /units — register/replace a unit. Dispatcher/admin only.
+  app.post("/units", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["dispatcher", "admin"]);
+
+    const b = (req.body ?? {}) as Record<string, unknown>;
+    if (!b.agencyId || !b.callSign || typeof b.type !== "string" || !UNIT_TYPES.has(b.type)) {
+      throw new BadRequestError("agencyId, callSign, type (medical|security|fire) required");
+    }
+
+    const unit: Unit = {
+      id: typeof b.id === "string" ? b.id : idGen(),
+      agencyId: String(b.agencyId),
+      type: b.type as UnitType,
+      callSign: String(b.callSign),
+      status: "available",
+      location: (b.location as { lat: number; lng: number } | null) ?? null,
+      updatedAt: clock(),
+    };
+    await units.upsert(unit);
+    return reply.status(201).send(unit);
+  });
+
+  // POST /units/:id/location — responder GPS ping.
+  app.post("/units/:id/location", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["responder", "dispatcher", "admin"]);
+
+    const { id } = req.params as { id: string };
+    const b = (req.body ?? {}) as Record<string, unknown>;
+    if (typeof b.lat !== "number" || typeof b.lng !== "number") {
+      throw new BadRequestError("lat and lng required");
+    }
+    const unit = await units.setLocation(id, { lat: b.lat, lng: b.lng }, clock());
+    if (!unit) throw new NotFoundError("unit not found");
+    return reply.send(unit);
+  });
+
+  // GET /units/available?lat=&lng=&type=&limit= — ranked for dispatch.
+  app.get("/units/available", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+
+    const q = req.query as Record<string, string>;
+    const lat = Number(q.lat);
+    const lng = Number(q.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      throw new BadRequestError("lat and lng query params required");
+    }
+    if (q.type && !UNIT_TYPES.has(q.type)) throw new BadRequestError("invalid type");
+
+    const ranked = rankAvailableUnits(await units.list(), {
+      location: { lat, lng },
+      type: q.type as UnitType | undefined,
+      agencyId: principal.agencyId ?? undefined,
+      limit: q.limit ? Number(q.limit) : undefined,
+    });
+    return reply.send(ranked);
+  });
+
+  // POST /incidents/:id/dispatch — dispatcher assigns a unit.
+  app.post("/incidents/:id/dispatch", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["dispatcher", "admin"]);
+
+    const { id } = req.params as { id: string };
+    const rm = await incidents.get(id);
+    if (!rm) throw new NotFoundError("incident not found");
+    assertAgencyAccess(principal, rm);
+
+    const b = (req.body ?? {}) as Record<string, unknown>;
+    if (typeof b.unitId !== "string" || typeof b.expectedVersion !== "number") {
+      throw new BadRequestError("unitId and expectedVersion required");
+    }
+
+    const record = await dispatch.dispatchUnit(id, b.unitId, principal.userId!, b.expectedVersion);
+    return reply.status(201).send(record);
+  });
+
+  // POST /dispatches/:id/accept | /reject — responder responds to assignment.
+  app.post("/dispatches/:id/accept", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["responder", "admin"]);
+    const { id } = req.params as { id: string };
+    return reply.send(await dispatch.acceptDispatch(id, principal.userId!));
+  });
+
+  app.post("/dispatches/:id/reject", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["responder", "admin"]);
+    const { id } = req.params as { id: string };
+    return reply.send(await dispatch.rejectDispatch(id, principal.userId!));
   });
 
   return app;

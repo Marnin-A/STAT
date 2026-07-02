@@ -38,6 +38,20 @@ export class RateLimitBlockedError extends DomainError {
   }
 }
 
+// Unit not reservable (already assigned / out of service) -> 409 Conflict.
+export class UnitUnavailableError extends DomainError {
+  constructor(unitId: string) {
+    super(`unit ${unitId} not available`, 409, "UNIT_UNAVAILABLE");
+  }
+}
+
+// Accept/reject on a dispatch that is not pending -> 409 Conflict.
+export class DispatchConflictError extends DomainError {
+  constructor(dispatchId: string, status: string) {
+    super(`dispatch ${dispatchId} already ${status}`, 409, "DISPATCH_CONFLICT");
+  }
+}
+
 // Incident not found -> 404.
 export class NotFoundError extends DomainError {
   constructor(message = "not found") {

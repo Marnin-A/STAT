@@ -20,6 +20,11 @@ import { getQuestions } from "./triage/questionnaire.js";
 import type { TriageAnswer } from "./triage/scoring.js";
 import { TelemetryService, type TelemetryInput } from "./telemetry/service.js";
 import { ReplayService, type ReplayCommand } from "./sync/replay.js";
+import { HospitalService } from "./hospital/service.js";
+import { InMemoryHospitalRegistry, type Hospital, type HospitalRegistry } from "./hospital/registry.js";
+import { rankHospitals } from "./hospital/routing.js";
+import { InMemoryNotifier, type Notifier } from "./notification/notifier.js";
+import { InMemoryAccessLog, type AccessLog } from "./audit/access-log.js";
 import {
   resolvePrincipal,
   requireAuthenticated,
@@ -34,6 +39,10 @@ export interface AppDeps {
   triage: TriageService;
   telemetry: TelemetryService;
   replay: ReplayService;
+  hospital: HospitalService;
+  hospitals: HospitalRegistry;
+  notifier: Notifier;
+  audit: AccessLog;
   idempotency: IdempotencyStore;
   bus: EventBus;
   lag: LagMetrics;
@@ -52,6 +61,8 @@ export function defaultDeps(idGen: IdGen = randomUUID, clock: Clock = () => new 
   const triage = new TriageService(events, incidents, idGen, clock);
   const telemetry = new TelemetryService(events, incidents, idGen, clock);
   const idempotency = new InMemoryIdempotencyStore();
+  const hospitals = new InMemoryHospitalRegistry();
+  const notifier = new InMemoryNotifier();
   return {
     incidents,
     dispatch: new DispatchService(events, units, new InMemoryDispatchStore(), incidents, idGen, clock),
@@ -59,6 +70,10 @@ export function defaultDeps(idGen: IdGen = randomUUID, clock: Clock = () => new 
     triage,
     telemetry,
     replay: new ReplayService(incidents, triage, telemetry, events, idempotency),
+    hospital: new HospitalService(events, incidents, hospitals, triage, telemetry, notifier, idGen, clock),
+    hospitals,
+    notifier,
+    audit: new InMemoryAccessLog(),
     idempotency,
     bus,
     lag,
@@ -71,7 +86,7 @@ const UNIT_TYPES: ReadonlySet<string> = new Set(["medical", "security", "fire"])
 
 export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
   const app = Fastify({ logger: false });
-  const { incidents, dispatch, units, triage, telemetry, replay, idempotency, bus, lag, idGen, clock } = deps;
+  const { incidents, dispatch, units, triage, telemetry, replay, hospital, hospitals, audit, idempotency, bus, lag, idGen, clock } = deps;
   app.register(websocket);
 
   app.setErrorHandler((err, _req, reply) => {
@@ -349,6 +364,7 @@ export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
     const rm = await incidents.get(id);
     if (!rm) throw new NotFoundError("incident not found");
     assertAgencyAccess(principal, rm);
+    await audit.record({ actorId: principal.userId!, role: principal.role, incidentId: id, resource: "triage", at: clock() });
     return reply.send(await triage.getTriage(id));
   });
 
@@ -375,6 +391,7 @@ export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
     const rm = await incidents.get(id);
     if (!rm) throw new NotFoundError("incident not found");
     assertAgencyAccess(principal, rm);
+    await audit.record({ actorId: principal.userId!, role: principal.role, incidentId: id, resource: "vitals", at: clock() });
     const q = req.query as Record<string, string>;
     return reply.send(await telemetry.latest(id, q.limit ? Number(q.limit) : undefined));
   });
@@ -399,6 +416,104 @@ export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
     }
 
     return reply.send(await replay.replay(id, b.commands as ReplayCommand[], principal.userId!));
+  });
+
+  // POST /hospitals — register/replace a hospital. Admin-provisioned.
+  app.post("/hospitals", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["admin"]);
+
+    const b = (req.body ?? {}) as Record<string, unknown>;
+    if (!b.name || !b.location || !Array.isArray(b.capabilities) || typeof b.availableBeds !== "number") {
+      throw new BadRequestError("name, location, capabilities, availableBeds required");
+    }
+
+    const h: Hospital = {
+      id: typeof b.id === "string" ? b.id : idGen(),
+      name: String(b.name),
+      location: b.location as { lat: number; lng: number },
+      capabilities: (b.capabilities as unknown[]).map(String),
+      availableBeds: b.availableBeds,
+      webhookUrl: typeof b.webhookUrl === "string" ? b.webhookUrl : null,
+      updatedAt: clock(),
+    };
+    await hospitals.upsert(h);
+    return reply.status(201).send(h);
+  });
+
+  // GET /hospitals?lat=&lng=&capability=&limit= — routing candidates, nearest first.
+  app.get("/hospitals", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+
+    const q = req.query as Record<string, string>;
+    const lat = Number(q.lat);
+    const lng = Number(q.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      throw new BadRequestError("lat and lng query params required");
+    }
+    const ranked = rankHospitals(await hospitals.list(), {
+      location: { lat, lng },
+      capability: q.capability,
+      limit: q.limit ? Number(q.limit) : undefined,
+    });
+    return reply.send(ranked);
+  });
+
+  // POST /incidents/:id/hospital — select receiving hospital.
+  app.post("/incidents/:id/hospital", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["responder", "dispatcher", "admin"]);
+
+    const { id } = req.params as { id: string };
+    const rm = await incidents.get(id);
+    if (!rm) throw new NotFoundError("incident not found");
+    assertAgencyAccess(principal, rm);
+
+    const b = (req.body ?? {}) as Record<string, unknown>;
+    if (typeof b.hospitalId !== "string") throw new BadRequestError("hospitalId required");
+
+    await hospital.selectHospital(id, b.hospitalId, principal.userId!);
+    return reply.send(await incidents.get(id));
+  });
+
+  // POST /incidents/:id/hospital/alert — pre-arrival handoff.
+  app.post("/incidents/:id/hospital/alert", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["responder", "dispatcher", "admin"]);
+
+    const { id } = req.params as { id: string };
+    const rm = await incidents.get(id);
+    if (!rm) throw new NotFoundError("incident not found");
+    assertAgencyAccess(principal, rm);
+
+    await hospital.alertHospital(id, principal.userId!);
+    await audit.record({ actorId: principal.userId!, role: principal.role, incidentId: id, resource: "handoff", at: clock() });
+    return reply.send(await incidents.get(id));
+  });
+
+  // GET /hospital/incidents — active incidents routed to this hospital.
+  // Hospital staff principals carry their hospital id in the agency slot.
+  app.get("/hospital/incidents", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["hospital_staff", "admin"]);
+    const q = req.query as Record<string, string>;
+    const hospitalId = principal.role === "admin" ? q.hospitalId : principal.agencyId;
+    if (!hospitalId) throw new BadRequestError("hospitalId required");
+    return reply.send(await hospital.getHospitalActiveIncidents(hospitalId));
+  });
+
+  // GET /audit/access?incidentId= — PHI access trail. Admin only.
+  app.get("/audit/access", async (req, reply) => {
+    const principal = resolvePrincipal(req.headers);
+    requireAuthenticated(principal);
+    assertRole(principal, ["admin"]);
+    const q = req.query as Record<string, string>;
+    return reply.send(await audit.list(q.incidentId));
   });
 
   // GET /metrics/realtime — publish-lag counters.

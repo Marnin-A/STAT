@@ -16,6 +16,7 @@ export interface IncidentReadModel {
   location: GeoPoint | null;
   assignedUnitIds: string[];
   hospitalId: string | null;
+  hospitalAlerted: boolean;
   riskScore: number;
   flagged: boolean;
   createdAt: string;
@@ -40,6 +41,7 @@ export function projectIncident(events: DomainEvent[]): IncidentReadModel | null
         location: (p.location as GeoPoint | null) ?? null,
         assignedUnitIds: [],
         hospitalId: null,
+        hospitalAlerted: false,
         riskScore: typeof p.riskScore === "number" ? p.riskScore : 0,
         flagged: e.type === "SOSFlagged",
         createdAt: e.recordedAt,
@@ -61,6 +63,9 @@ export function projectIncident(events: DomainEvent[]): IncidentReadModel | null
         break;
       case "HospitalSelected":
         rm.hospitalId = String(e.payload.hospitalId);
+        break;
+      case "HospitalAlerted":
+        rm.hospitalAlerted = true;
         break;
     }
     rm.updatedAt = e.recordedAt;

@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { useApi } from '../api/ApiProvider'
+import { useIncidentChannel } from '../hooks/useIncidentChannel'
 import { ProgressTracker } from '../components/ui/ProgressTracker'
 import { VitalCard } from '../components/ui/VitalCard'
 import { MapPlaceholder } from '../components/ui/MapPlaceholder'
@@ -35,11 +36,22 @@ export function TriageTracking() {
   const [submitting, setSubmitting] = useState(false)
   const [score, setScore] = useState<string | null>(null)
 
-  useEffect(() => {
+  const load = useCallback(() => {
     if (!id) return
     api.getIncident(id).then(setIncident)
     api.getTriage(id).then(setTriage)
   }, [id, api])
+
+  useEffect(load, [load])
+
+  // Live: every append on this incident lands here. `onResync` covers the gap
+  // a dropped socket leaves — the channel has no replay, so on reconnect the
+  // screen refetches rather than rendering a stale incident.
+  const { connected, latest } = useIncidentChannel(id, { onResync: load })
+
+  useEffect(() => {
+    if (latest) load()
+  }, [latest, load])
 
   const handleAnswer = (questionId: string, value: string | boolean) => {
     setAnswers(prev => {
@@ -78,7 +90,23 @@ export function TriageTracking() {
   return (
     <div className="flex flex-col gap-6 px-[var(--spacing-margin-mobile)] py-6">
       <div>
-        <h2 className="text-xl font-extrabold text-on-surface mb-1">Incident #{incident.id.slice(0, 8)}</h2>
+        <div className="flex items-center justify-between gap-3 mb-1">
+          <h2 className="text-xl font-extrabold text-on-surface">Incident #{incident.id.slice(0, 8)}</h2>
+          {/* Whether this screen is live matters during a response: a frozen
+              view and a quiet incident look identical without it. */}
+          <span
+            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"
+            data-testid="channel-status"
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${connected ? 'bg-primary animate-pulse' : 'bg-outline'}`}
+              aria-hidden="true"
+            />
+            <span className={connected ? 'text-primary' : 'text-on-surface-variant'}>
+              {connected ? 'Live' : 'Offline'}
+            </span>
+          </span>
+        </div>
         <p className="text-sm text-on-surface-variant uppercase tracking-wider">
           {incident.type} — {incident.priority} — {incident.status}
         </p>

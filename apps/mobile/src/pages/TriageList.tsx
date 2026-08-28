@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useApi } from '../api/ApiProvider'
+import { useDashboardStream } from '../hooks/useDashboardStream'
 import { IncidentCard } from '../components/ui/IncidentCard'
 import type { Incident, IncidentType } from '@stat/shared'
 
@@ -16,12 +17,17 @@ export function TriageList() {
   const [activeFilter, setActiveFilter] = useState<IncidentType | 'all'>('all')
   const [loading, setLoading] = useState(true)
 
+  // Any event on the agency feed means the board may have changed. Refetching
+  // on a revision bump is cheaper to reason about than patching a list from
+  // event payloads, and the payloads are small.
+  const { revision } = useDashboardStream()
+
   useEffect(() => {
     setLoading(true)
     api.listIncidents(activeFilter === 'all' ? undefined : { type: activeFilter })
       .then(setIncidents)
       .finally(() => setLoading(false))
-  }, [activeFilter, api])
+  }, [activeFilter, api, revision])
 
   return (
     <div className="flex flex-col gap-4 px-[var(--spacing-margin-mobile)] py-6">

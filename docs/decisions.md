@@ -2,6 +2,17 @@
 
 One line per decision. Newest on top. Rationale terse.
 
+## 2026-08-28 (M5 realtime + M6 offline)
+
+- **Reconnect means refetch.** The incident channel has no replay, so `useIncidentChannel` calls `onResync` on every connect and the screen reloads the read model. Without it a dropped socket leaves the UI silently stale — the most dangerous failure mode in a live response.
+- **Application close codes are terminal.** 4001/4003/4004 stop the backoff loop; an unauthorized socket will still be unauthorized in a second, and retrying only costs a responder battery and data.
+- **A malformed frame must never blank the screen.** Parse before calling `setState` — React runs a state updater during render, where a throw escapes the handler's catch. (A test caught this; it was a real bug.)
+- **Dashboard refetches on a revision bump** rather than patching the list from event payloads. Cheaper to reason about, and the list is agency-scoped and small.
+- **`NetworkError` requeues, `ApiError` does not.** The request that never landed is worth retrying; the one the server decided on is spent. This is why the two error classes exist.
+- **Per-command rejections surface in the UI.** A command the server refused is work the responder believes happened — the banner says so instead of dropping it silently.
+- **Offline queue keys and timestamps are stamped at capture**, not at drain. The server orders by `occurredAt` and dedupes by `key`, so a double drain is a no-op and actions replay in the order they happened.
+- **SSE cannot carry headers.** `useDashboardStream` will only authenticate once the session is a cookie or URL token (M4); against today's header stub the server sees it as anonymous.
+
 ## 2026-08-28 (M3 persistence)
 
 - **Postgres adapters mirror the in-memory ones one-for-one**, chosen at startup from `DATABASE_POOL_URL`/`DATABASE_URL`. No domain code knows which it got.

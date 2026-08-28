@@ -2,6 +2,16 @@
 
 One line per decision. Newest on top. Rationale terse.
 
+## 2026-08-28 (M3 persistence)
+
+- **Postgres adapters mirror the in-memory ones one-for-one**, chosen at startup from `DATABASE_POOL_URL`/`DATABASE_URL`. No domain code knows which it got.
+- **`UNIQUE (incident_id, version)` IS the optimistic lock.** A 23505 becomes `VersionConflictError` — the same outcome the in-memory store reaches by comparing lengths, but unraceable.
+- **Atomic unit reserve is a single conditional UPDATE** (`where id = $1 and status = 'available'`). Never a read-then-write; that is what stops double assignment under concurrency.
+- **Conformance suite is the safety net for the whole swap.** It already earned its keep: it caught the in-memory idempotency store overwriting on a repeat `set` where Postgres keeps the first response. First-write-wins is correct (a retry must get the original response) and the in-memory store was fixed to match.
+- **No projection table yet.** `list()` folds streams, but adapters may implement the optional `loadByAgency` to do it in one query instead of one round trip per incident. Postgres does. A materialised read model is the next optimisation, not a correctness need.
+- **In-memory fallback is loud.** Starting without a connection string prints a warning: silently losing every incident on restart should never be a surprise.
+- **Migrations are idempotent and runnable without the Supabase CLI** (`pnpm db:migrate`), so CI and a bare machine can both apply them.
+
 ## 2026-08-28 (M2 real transport)
 
 - **`HttpApiClient` lives in `@stat/shared`, beside `MockApiClient`.** Both implement the one `ApiClient`; putting the real client there lets the API's integration test drive the *shipping* client against a real socket rather than a test double.

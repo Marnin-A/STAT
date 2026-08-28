@@ -13,6 +13,10 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
   }
 
   async set(key: string, value: unknown): Promise<void> {
+    // First write wins. The whole point of the key is that a retry gets the
+    // response the original caller got; letting a concurrent duplicate
+    // overwrite it would hand two callers different answers for one request.
+    if (this.map.has(key)) return;
     this.map.set(key, value);
   }
 }

@@ -11,6 +11,14 @@ export interface EventStore {
   put(event: DomainEvent, expectedVersion: number): Promise<void>;
   load(incidentId: string): Promise<DomainEvent[]>;
   incidentIds(): Promise<string[]>;
+  /**
+   * Optional bulk read: every stream for one agency (null = all) in one go.
+   *
+   * `IncidentService.list()` folds one read model per incident. Against a
+   * database that is a round trip each; an adapter that can do it in a single
+   * query implements this and the service uses it automatically.
+   */
+  loadByAgency?(agencyId: string | null): Promise<Map<string, DomainEvent[]>>;
 }
 
 export interface AppendInput {

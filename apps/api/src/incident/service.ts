@@ -1,4 +1,4 @@
-import type { Clock, IdGen } from "../shared/event.js";
+import type { Clock, DomainEvent, IdGen } from "../shared/event.js";
 import { NotFoundError, RateLimitBlockedError } from "../shared/errors.js";
 import { appendEvent, type EventStore } from "./event-store.js";
 import type { RateLimitStore } from "./rate-limit.js";
@@ -151,10 +151,13 @@ export class IncidentService {
     status?: IncidentStatus,
     type?: IncidentType,
   ): Promise<IncidentReadModel[]> {
-    const ids = await this.events.incidentIds();
+    const streams = this.events.loadByAgency
+      ? await this.events.loadByAgency(agencyId)
+      : await this.loadAllStreams();
+
     const out: IncidentReadModel[] = [];
-    for (const id of ids) {
-      const rm = await this.get(id);
+    for (const log of streams.values()) {
+      const rm = projectIncident(log);
       if (!rm) continue;
       if (agencyId !== null && rm.agencyId !== agencyId) continue;
       if (status && rm.status !== status) continue;
@@ -162,5 +165,13 @@ export class IncidentService {
       out.push(rm);
     }
     return out;
+  }
+
+  private async loadAllStreams(): Promise<Map<string, DomainEvent[]>> {
+    const streams = new Map<string, DomainEvent[]>();
+    for (const id of await this.events.incidentIds()) {
+      streams.set(id, await this.events.load(id));
+    }
+    return streams;
   }
 }

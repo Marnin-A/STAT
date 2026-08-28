@@ -27,6 +27,16 @@ import { InMemoryHospitalRegistry, toWire, type Hospital, type HospitalRegistry 
 import { rankHospitals } from "./hospital/routing.js";
 import { InMemoryNotifier, type Notifier } from "./notification/notifier.js";
 import { InMemoryAccessLog, type AccessLog } from "./audit/access-log.js";
+import { connectionString, createPool, type Pool } from "./db/pool.js";
+import {
+  PgAccessLog,
+  PgDispatchStore,
+  PgEventStore,
+  PgHospitalRegistry,
+  PgIdempotencyStore,
+  PgRateLimitStore,
+  PgUnitRegistry,
+} from "./db/adapters.js";
 import {
   resolvePrincipal,
   requireAuthenticated,
@@ -587,12 +597,74 @@ export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
   return app;
 }
 
+/**
+ * Postgres-backed dependencies.
+ *
+ * Identical wiring to `defaultDeps` with the storage ports swapped — the
+ * domain does not know which it got, and `db/conformance.test.ts` is what
+ * makes that claim safe. The bus stays in-process: one node needs no Redis
+ * (see the roadmap, M5).
+ */
+export function pgDeps(
+  pool: Pool,
+  idGen: IdGen = randomUUID,
+  clock: Clock = () => new Date().toISOString(),
+): AppDeps {
+  const bus = new InMemoryEventBus();
+  const lag = new LagMetrics();
+  const events = new PublishingEventStore(new PgEventStore(pool), bus, lag);
+  const incidents = new IncidentService(events, new PgRateLimitStore(pool), idGen, clock);
+  const units = new PgUnitRegistry(pool);
+  const triage = new TriageService(events, incidents, idGen, clock);
+  const telemetry = new TelemetryService(events, incidents, idGen, clock);
+  const idempotency = new PgIdempotencyStore(pool);
+  const hospitals = new PgHospitalRegistry(pool);
+  const notifier = new InMemoryNotifier();
+
+  return {
+    incidents,
+    dispatch: new DispatchService(events, units, new PgDispatchStore(pool), incidents, idGen, clock),
+    units,
+    triage,
+    telemetry,
+    replay: new ReplayService(incidents, triage, telemetry, events, idempotency),
+    hospital: new HospitalService(events, incidents, hospitals, triage, telemetry, notifier, idGen, clock),
+    hospitals,
+    notifier,
+    audit: new PgAccessLog(pool),
+    idempotency,
+    bus,
+    lag,
+    idGen,
+    clock,
+  };
+}
+
 // Entry point.
 const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
 if (isMain) {
-  const app = buildApp();
+  const url = connectionString();
+  let pool: Pool | null = null;
+
+  if (url) {
+    pool = createPool(url);
+    console.log("STAT backend: postgres");
+  } else {
+    // Explicit, because silently losing every incident on restart is the kind
+    // of thing that should never be a surprise.
+    console.warn("STAT backend: NO DATABASE_URL — running in-memory, data is lost on restart");
+  }
+
+  const app = buildApp(pool ? pgDeps(pool) : defaultDeps());
   const port = Number(process.env.PORT ?? 3000);
+
   app.listen({ port, host: "0.0.0.0" }).then(() => {
     console.log(`STAT backend listening on :${port}`);
   });
+
+  for (const signal of ["SIGINT", "SIGTERM"] as const) {
+    process.on(signal, () => {
+      void app.close().then(() => pool?.end()).then(() => process.exit(0));
+    });
+  }
 }

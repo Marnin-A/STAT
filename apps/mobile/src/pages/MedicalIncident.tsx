@@ -5,7 +5,8 @@ import { VitalCard } from '../components/ui/VitalCard'
 import { ProgressTracker } from '../components/ui/ProgressTracker'
 import { ActionButton } from '../components/ui/ActionButton'
 import { MapPlaceholder } from '../components/ui/MapPlaceholder'
-import type { Incident, Vital } from '@stat/shared'
+import type { Incident } from '@stat/shared'
+import type { Vital } from '../types/ui'
 
 const mockVitals: Vital[] = [
   { label: 'Heart Rate', value: 0, unit: 'bpm', trend: 'flat', critical: true },

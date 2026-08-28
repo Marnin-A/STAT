@@ -5,7 +5,8 @@ import { ProgressTracker } from '../components/ui/ProgressTracker'
 import { VitalCard } from '../components/ui/VitalCard'
 import { MapPlaceholder } from '../components/ui/MapPlaceholder'
 import { ActionButton } from '../components/ui/ActionButton'
-import type { Incident, Triage, TriageAnswer, Vital } from '@stat/shared'
+import type { Incident, Triage, TriageAnswer } from '@stat/shared'
+import type { Vital } from '../types/ui'
 
 const statusToStep: Record<string, number> = {
   created: 0,
@@ -115,14 +116,6 @@ export function TriageTracking() {
                   No
                 </button>
               </div>
-            )}
-            {q.type === 'text' && (
-              <textarea
-                onChange={(e) => handleAnswer(q.id, e.target.value)}
-                className="w-full p-2 border-2 border-outline-variant rounded text-sm"
-                rows={2}
-                placeholder="Describe..."
-              />
             )}
           </div>
         ))}

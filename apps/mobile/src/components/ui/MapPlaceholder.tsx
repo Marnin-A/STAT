@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react'
-import type { Location } from '@stat/shared'
+import type { GeoPoint } from '@stat/shared'
 
 interface MapPlaceholderProps {
-  center: Location
+  /** Null while the device has no GPS fix — the map renders its empty state. */
+  center: GeoPoint | null
   eta?: string
   className?: string
 }
@@ -27,7 +28,7 @@ export function MapPlaceholder({ center, eta, className = '' }: MapPlaceholderPr
         <div className="text-center">
           <span className="material-symbols-outlined text-6xl text-on-surface-variant mb-2">map</span>
           <p className="text-sm text-on-surface-variant">
-            {center.lat.toFixed(4)}, {center.lng.toFixed(4)}
+            {center ? `${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}` : 'Awaiting GPS fix'}
           </p>
         </div>
       </div>

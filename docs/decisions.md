@@ -2,6 +2,21 @@
 
 One line per decision. Newest on top. Rationale terse.
 
+## 2026-08-28 (M1 contract freeze)
+
+- **`backend/` -> `apps/api`.** One workspace, one lockfile, one install. Backend can now import the shared contract.
+- **`@stat/shared` is the single wire contract, imported type-only by the API.** The package also holds `MockApiClient` (runtime code the API must never pull in); `import type` erases at compile time, so `dist/` has no reference and the package needs no build step or ordering.
+- **UI view-models are not wire types.** `Vital`/`ChatMessage` moved to `apps/mobile/src/types/ui.ts`. The contract holds only what the API actually sends.
+- **`UnitType` = vehicle vocabulary** (`ambulance|police|fire|rescue`), matching the DB seed. Incident->unit mapping lives server-side; clients pass `?for=<incidentType>` and never encode the table.
+- **`UnitStatus` = `available|standby|assigned|out_of_service`.** Preserves the atomic `available`<->`assigned` reserve/release pair dispatch depends on; drops the redundant `busy`/`offline` naming.
+- **Read model exposes `version`.** Without it a client cannot supply `expectedVersion` and cannot transition an incident at all.
+- **`POST /incidents` returns the Incident, not a create receipt.** The client needs `version` immediately for its next mutation.
+- **Untriaged SOS defaults to `priority: critical`.** Fail-safe: over-triage is recoverable, under-triage is not.
+- **An SOS with no GPS fix is still filed** (`location: null`). A dispatcher can work a located-later incident; they cannot work one that was never filed.
+- **`deviceId` is a per-install UUID in Preferences** (`useDeviceId`), not a fingerprint. Clearing app data mints a new one — the intended NDPA trade.
+- **Protocol questionnaire has no free-text questions.** Every answer must be scoreable by the deterministic rules.
+- **Contract tests are the gate.** `apps/api/src/contract.test.ts` implements `ApiClient` over `app.inject()`, so interface drift is a compile error, not a runtime surprise.
+
 ## 2026-08-28
 
 - **Supabase: hosted project, no local stack.** Managed project on the platform; migrations via `supabase link` + `db push`. No Docker/`supabase start`. Connection strings supplied through gitignored `.env`.

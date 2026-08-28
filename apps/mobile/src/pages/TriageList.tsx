@@ -18,7 +18,7 @@ export function TriageList() {
 
   useEffect(() => {
     setLoading(true)
-    api.listIncidents(activeFilter === 'all' ? {} : { type: activeFilter })
+    api.listIncidents(activeFilter === 'all' ? undefined : { type: activeFilter })
       .then(setIncidents)
       .finally(() => setLoading(false))
   }, [activeFilter, api])

@@ -2,6 +2,14 @@
 
 One line per decision. Newest on top. Rationale terse.
 
+## 2026-08-28 (M2 real transport)
+
+- **`HttpApiClient` lives in `@stat/shared`, beside `MockApiClient`.** Both implement the one `ApiClient`; putting the real client there lets the API's integration test drive the *shipping* client against a real socket rather than a test double.
+- **`ApiError` vs `NetworkError` is a deliberate split.** `ApiError` is the server rejecting on merit (never blind-retry); `NetworkError` is the request never arriving (the offline queue retries exactly this). M6 depends on the distinction.
+- **Transport chosen from `VITE_API_URL`.** Set = real backend, unset = MockApiClient. Tests inject a client and take neither branch.
+- **Interim principal headers in `api/session.ts`** (`VITE_DEV_*`). No security whatsoever — one place to swap for a bearer token at M4.
+- **Tests excluded from the API build.** `tsconfig` now excludes `*.test.ts`, so `dist/` ships no test code and no stray runtime import of `@stat/shared`.
+
 ## 2026-08-28 (M1 contract freeze)
 
 - **`backend/` -> `apps/api`.** One workspace, one lockfile, one install. Backend can now import the shared contract.

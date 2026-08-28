@@ -6,8 +6,7 @@ on:
   pull_request:
 
 jobs:
-  mobile:
-    name: mobile + shared
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,29 +17,36 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @stat/mobile test:run
-      - run: pnpm build
-
-  api:
-    name: api
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-          cache-dependency-path: backend/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
-      # In-memory suite only. The Pg conformance suite (M3) needs secrets and
+      # In-memory suites only. The Pg conformance suite (M3) needs secrets and
       # runs separately, so forks and secret-less runs still get a full gate.
-      - run: pnpm test
+      - run: pnpm test:api
+      - run: pnpm test:mobile
       - run: pnpm build
+
+  # Postgres port conformance. Needs a database secret, so it cannot run on
+  # forks — the in-memory gate above always runs and covers the same
+  # assertions against the InMemory adapters.
+  conformance:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Port conformance against Postgres
+        env:
+          TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+        run: |
+          if [ -z "$TEST_DATABASE_URL" ]; then
+            echo "TEST_DATABASE_URL not set — skipping Postgres conformance"
+            exit 0
+          fi
+          pnpm --filter @stat/api exec vitest run src/db/conformance.test.ts

@@ -41,7 +41,9 @@ export function IncidentCard({ incident, routePrefix }: IncidentCardProps) {
               </span>
             </div>
             <p className="text-xs text-on-surface-variant truncate">
-              {incident.location.address ?? `${incident.location.lat.toFixed(4)}, ${incident.location.lng.toFixed(4)}`}
+              {incident.location
+                ? `${incident.location.lat.toFixed(4)}, ${incident.location.lng.toFixed(4)}`
+                : 'Location unavailable'}
             </p>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs font-bold uppercase text-primary">{incident.priority}</span>

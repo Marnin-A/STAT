@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApi } from '../api/ApiProvider'
 import { useGeolocation } from '../hooks/useGeolocation'
+import { useDeviceId } from '../hooks/useDeviceId'
 import { useHaptics } from '../hooks/useHaptics'
 import { ActionButton } from '../components/ui/ActionButton'
 import type { IncidentType } from '@stat/shared'
@@ -18,14 +19,18 @@ export function Dashboard() {
   const api = useApi()
   const navigate = useNavigate()
   const { location, loading: gpsLoading, error: gpsError, getCurrentPosition } = useGeolocation()
+  const deviceId = useDeviceId()
   const { impactHeavy, notificationSuccess } = useHaptics()
 
   const handleSOS = async () => {
     setSubmitting(true)
     await impactHeavy()
 
-    const loc = location ?? await getCurrentPosition()
-    if (!loc) {
+    // A missing fix must never swallow an SOS. The dispatcher can work a
+    // located-later incident; they cannot work one that was never filed.
+    const loc = location ?? (await getCurrentPosition())
+
+    if (!deviceId) {
       setSubmitting(false)
       return
     }
@@ -33,7 +38,12 @@ export function Dashboard() {
     try {
       const idempotencyKey = crypto.randomUUID()
       const incident = await api.createIncident(
-        { type: selectedType, location: loc },
+        {
+          type: selectedType,
+          location: loc ?? null,
+          deviceId,
+          occurredAt: new Date().toISOString(),
+        },
         idempotencyKey
       )
       await notificationSuccess()

@@ -26,7 +26,9 @@ export function DispatchMap() {
   const [units, setUnits] = useState<Unit[]>([])
 
   useEffect(() => {
-    api.getAvailableUnits().then(setUnits)
+    api
+      .getAvailableUnits({ near: { lat: LAGOS_CENTER[0], lng: LAGOS_CENTER[1] } })
+      .then(setUnits)
   }, [api])
 
   return (
@@ -48,10 +50,10 @@ export function DispatchMap() {
           <Marker position={LAGOS_CENTER} icon={incidentIcon}>
             <Popup>Active Incident Zone</Popup>
           </Marker>
-          {units.map((unit) => (
+          {units.filter((unit) => unit.location !== null).map((unit) => (
             <Marker
               key={unit.id}
-              position={[unit.location.lat, unit.location.lng]}
+              position={[unit.location!.lat, unit.location!.lng]}
               icon={unitIcon}
             >
               <Popup>

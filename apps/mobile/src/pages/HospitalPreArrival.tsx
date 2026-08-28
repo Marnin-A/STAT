@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { VitalCard } from '../components/ui/VitalCard'
 import { ChatChannel } from '../components/ui/ChatChannel'
 import { ActionButton } from '../components/ui/ActionButton'
-import type { Vital, ChatMessage } from '@stat/shared'
+import type { Vital, ChatMessage } from '../types/ui'
 
 const liveVitals: Vital[] = [
   { label: 'Heart Rate', value: 118, unit: 'bpm', trend: 'up', critical: true },

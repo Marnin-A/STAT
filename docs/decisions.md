@@ -2,6 +2,55 @@
 
 One line per decision. Newest on top. Rationale terse.
 
+## 2026-08-28 (M8 retention)
+
+- **Vitals retention redacts, it does not delete.** The NDPA obligation is to stop holding patient data; the audit trail depends on an append-only log. Deleting rows would tear holes in the version sequence every projection folds over, so the `TelemetryRecorded` event survives — who took vitals, on which incident, when — and its payload is emptied. The readings are gone; the timeline is intact.
+- **The job is idempotent** (`payload <> '{}'`), so a cron that double-fires or a retried run costs nothing and reports no phantom work.
+
+## 2026-08-28 (M5 realtime + M6 offline)
+
+- **Reconnect means refetch.** The incident channel has no replay, so `useIncidentChannel` calls `onResync` on every connect and the screen reloads the read model. Without it a dropped socket leaves the UI silently stale — the most dangerous failure mode in a live response.
+- **Application close codes are terminal.** 4001/4003/4004 stop the backoff loop; an unauthorized socket will still be unauthorized in a second, and retrying only costs a responder battery and data.
+- **A malformed frame must never blank the screen.** Parse before calling `setState` — React runs a state updater during render, where a throw escapes the handler's catch. (A test caught this; it was a real bug.)
+- **Dashboard refetches on a revision bump** rather than patching the list from event payloads. Cheaper to reason about, and the list is agency-scoped and small.
+- **`NetworkError` requeues, `ApiError` does not.** The request that never landed is worth retrying; the one the server decided on is spent. This is why the two error classes exist.
+- **Per-command rejections surface in the UI.** A command the server refused is work the responder believes happened — the banner says so instead of dropping it silently.
+- **Offline queue keys and timestamps are stamped at capture**, not at drain. The server orders by `occurredAt` and dedupes by `key`, so a double drain is a no-op and actions replay in the order they happened.
+- **SSE cannot carry headers.** `useDashboardStream` will only authenticate once the session is a cookie or URL token (M4); against today's header stub the server sees it as anonymous.
+
+## 2026-08-28 (M3 persistence)
+
+- **Postgres adapters mirror the in-memory ones one-for-one**, chosen at startup from `DATABASE_POOL_URL`/`DATABASE_URL`. No domain code knows which it got.
+- **`UNIQUE (incident_id, version)` IS the optimistic lock.** A 23505 becomes `VersionConflictError` — the same outcome the in-memory store reaches by comparing lengths, but unraceable.
+- **Atomic unit reserve is a single conditional UPDATE** (`where id = $1 and status = 'available'`). Never a read-then-write; that is what stops double assignment under concurrency.
+- **Conformance suite is the safety net for the whole swap.** It already earned its keep: it caught the in-memory idempotency store overwriting on a repeat `set` where Postgres keeps the first response. First-write-wins is correct (a retry must get the original response) and the in-memory store was fixed to match.
+- **No projection table yet.** `list()` folds streams, but adapters may implement the optional `loadByAgency` to do it in one query instead of one round trip per incident. Postgres does. A materialised read model is the next optimisation, not a correctness need.
+- **In-memory fallback is loud.** Starting without a connection string prints a warning: silently losing every incident on restart should never be a surprise.
+- **Migrations are idempotent and runnable without the Supabase CLI** (`pnpm db:migrate`), so CI and a bare machine can both apply them.
+
+## 2026-08-28 (M2 real transport)
+
+- **`HttpApiClient` lives in `@stat/shared`, beside `MockApiClient`.** Both implement the one `ApiClient`; putting the real client there lets the API's integration test drive the *shipping* client against a real socket rather than a test double.
+- **`ApiError` vs `NetworkError` is a deliberate split.** `ApiError` is the server rejecting on merit (never blind-retry); `NetworkError` is the request never arriving (the offline queue retries exactly this). M6 depends on the distinction.
+- **Transport chosen from `VITE_API_URL`.** Set = real backend, unset = MockApiClient. Tests inject a client and take neither branch.
+- **Interim principal headers in `api/session.ts`** (`VITE_DEV_*`). No security whatsoever — one place to swap for a bearer token at M4.
+- **Tests excluded from the API build.** `tsconfig` now excludes `*.test.ts`, so `dist/` ships no test code and no stray runtime import of `@stat/shared`.
+
+## 2026-08-28 (M1 contract freeze)
+
+- **`backend/` -> `apps/api`.** One workspace, one lockfile, one install. Backend can now import the shared contract.
+- **`@stat/shared` is the single wire contract, imported type-only by the API.** The package also holds `MockApiClient` (runtime code the API must never pull in); `import type` erases at compile time, so `dist/` has no reference and the package needs no build step or ordering.
+- **UI view-models are not wire types.** `Vital`/`ChatMessage` moved to `apps/mobile/src/types/ui.ts`. The contract holds only what the API actually sends.
+- **`UnitType` = vehicle vocabulary** (`ambulance|police|fire|rescue`), matching the DB seed. Incident->unit mapping lives server-side; clients pass `?for=<incidentType>` and never encode the table.
+- **`UnitStatus` = `available|standby|assigned|out_of_service`.** Preserves the atomic `available`<->`assigned` reserve/release pair dispatch depends on; drops the redundant `busy`/`offline` naming.
+- **Read model exposes `version`.** Without it a client cannot supply `expectedVersion` and cannot transition an incident at all.
+- **`POST /incidents` returns the Incident, not a create receipt.** The client needs `version` immediately for its next mutation.
+- **Untriaged SOS defaults to `priority: critical`.** Fail-safe: over-triage is recoverable, under-triage is not.
+- **An SOS with no GPS fix is still filed** (`location: null`). A dispatcher can work a located-later incident; they cannot work one that was never filed.
+- **`deviceId` is a per-install UUID in Preferences** (`useDeviceId`), not a fingerprint. Clearing app data mints a new one — the intended NDPA trade.
+- **Protocol questionnaire has no free-text questions.** Every answer must be scoreable by the deterministic rules.
+- **Contract tests are the gate.** `apps/api/src/contract.test.ts` implements `ApiClient` over `app.inject()`, so interface drift is a compile error, not a runtime surprise.
+
 ## 2026-08-28
 
 - **Supabase: hosted project, no local stack.** Managed project on the platform; migrations via `supabase link` + `db push`. No Docker/`supabase start`. Connection strings supplied through gitignored `.env`.

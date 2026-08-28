@@ -19,6 +19,12 @@ export interface EventStore {
    * query implements this and the service uses it automatically.
    */
   loadByAgency?(agencyId: string | null): Promise<Map<string, DomainEvent[]>>;
+  /**
+   * Empties the payload of every `TelemetryRecorded` event captured before
+   * `cutoff`, leaving the event itself in place (see telemetry/retention.ts).
+   * Returns the number redacted.
+   */
+  redactTelemetryBefore?(cutoff: string): Promise<number>;
 }
 
 export interface AppendInput {
@@ -76,5 +82,21 @@ export class InMemoryEventStore implements EventStore {
 
   async incidentIds(): Promise<string[]> {
     return [...this.streams.keys()];
+  }
+
+  async redactTelemetryBefore(cutoff: string): Promise<number> {
+    const before = Date.parse(cutoff);
+    let redacted = 0;
+
+    for (const stream of this.streams.values()) {
+      for (const event of stream) {
+        if (event.type !== "TelemetryRecorded") continue;
+        if (Object.keys(event.payload).length === 0) continue; // already done
+        if (Date.parse(String(event.payload.capturedAt)) >= before) continue;
+        event.payload = {};
+        redacted += 1;
+      }
+    }
+    return redacted;
   }
 }

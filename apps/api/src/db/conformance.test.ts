@@ -168,6 +168,41 @@ function conformanceSuite(name: string, makePorts: () => Promise<Ports> | Ports)
       expect((await ports.events.incidentIds()).sort()).toEqual([a, b].sort());
     });
 
+    it("redacts expired telemetry payloads without removing the events", async () => {
+      const incidentId = randomUUID();
+      await ports.events.put(event({ incidentId, version: 1 }), 0);
+      await ports.events.put(
+        event({
+          incidentId,
+          version: 2,
+          type: "TelemetryRecorded",
+          payload: { kind: "vitals", capturedAt: "2026-01-01T00:00:00.000Z", payload: { hr: 80 } },
+        }),
+        1,
+      );
+      await ports.events.put(
+        event({
+          incidentId,
+          version: 3,
+          type: "TelemetryRecorded",
+          payload: { kind: "vitals", capturedAt: "2026-08-01T00:00:00.000Z", payload: { hr: 90 } },
+        }),
+        2,
+      );
+
+      const cutoff = "2026-06-01T00:00:00.000Z";
+      expect(await ports.events.redactTelemetryBefore!(cutoff)).toBe(1);
+      // Idempotent: a nightly job must not keep reporting the same work.
+      expect(await ports.events.redactTelemetryBefore!(cutoff)).toBe(0);
+
+      const log = await ports.events.load(incidentId);
+
+      // Versions stay contiguous — projections fold over this sequence.
+      expect(log.map((e) => e.version)).toEqual([1, 2, 3]);
+      expect(log[1]!.payload).toEqual({});
+      expect(log[2]!.payload).toMatchObject({ payload: { hr: 90 } });
+    });
+
     // ---------------------------------------------------------- rate limits
 
     it("counts hits per key independently", async () => {

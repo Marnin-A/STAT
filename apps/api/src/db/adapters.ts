@@ -129,6 +129,25 @@ export class PgEventStore implements EventStore {
   }
 
   /**
+   * Empties expired telemetry payloads in place (NDPA, 90 days).
+   *
+   * An UPDATE, not a DELETE: removing rows would tear holes in the version
+   * sequence every projection folds over. The event survives as proof that
+   * vitals were taken; the readings do not.
+   */
+  async redactTelemetryBefore(cutoff: string): Promise<number> {
+    const res = await this.pool.query(
+      `update incident_events
+          set payload = '{}'::jsonb
+        where type = 'TelemetryRecorded'
+          and payload <> '{}'::jsonb
+          and (payload->>'capturedAt')::timestamptz < $1`,
+      [cutoff],
+    );
+    return res.rowCount ?? 0;
+  }
+
+  /**
    * Every stream for one agency in a single query.
    *
    * `list()` on the service would otherwise be one round trip per incident.

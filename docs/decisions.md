@@ -2,6 +2,11 @@
 
 One line per decision. Newest on top. Rationale terse.
 
+## 2026-08-28 (M8 retention)
+
+- **Vitals retention redacts, it does not delete.** The NDPA obligation is to stop holding patient data; the audit trail depends on an append-only log. Deleting rows would tear holes in the version sequence every projection folds over, so the `TelemetryRecorded` event survives — who took vitals, on which incident, when — and its payload is emptied. The readings are gone; the timeline is intact.
+- **The job is idempotent** (`payload <> '{}'`), so a cron that double-fires or a retried run costs nothing and reports no phantom work.
+
 ## 2026-08-28 (M5 realtime + M6 offline)
 
 - **Reconnect means refetch.** The incident channel has no replay, so `useIncidentChannel` calls `onResync` on every connect and the screen reloads the read model. Without it a dropped socket leaves the UI silently stale — the most dangerous failure mode in a live response.

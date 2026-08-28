@@ -10,7 +10,14 @@ export class PublishingEventStore implements EventStore {
     private readonly inner: EventStore,
     private readonly bus: EventBus,
     private readonly metrics?: LagMetrics,
-  ) {}
+  ) {
+    if (inner.loadByAgency) {
+      this.loadByAgency = (agencyId) => inner.loadByAgency!(agencyId);
+    }
+    if (inner.redactTelemetryBefore) {
+      this.redactTelemetryBefore = (cutoff) => inner.redactTelemetryBefore!(cutoff);
+    }
+  }
 
   async put(event: DomainEvent, expectedVersion: number): Promise<void> {
     await this.inner.put(event, expectedVersion); // throws on conflict -> no publish
@@ -31,4 +38,10 @@ export class PublishingEventStore implements EventStore {
   incidentIds(): Promise<string[]> {
     return this.inner.incidentIds();
   }
+
+  // Optional capabilities are forwarded only when the wrapped store has them,
+  // so the decorator never advertises more than what it decorates. Assigned in
+  // the constructor because a field initialiser cannot read `this.inner` yet.
+  loadByAgency?: (agencyId: string | null) => Promise<Map<string, DomainEvent[]>>;
+  redactTelemetryBefore?: (cutoff: string) => Promise<number>;
 }

@@ -2,6 +2,11 @@
 
 One line per decision. Newest on top. Rationale terse.
 
+## 2026-08-28
+
+- **Supabase: hosted project, no local stack.** Managed project on the platform; migrations via `supabase link` + `db push`. No Docker/`supabase start`. Connection strings supplied through gitignored `.env`.
+- **Supabase used as managed Postgres, not as a BaaS.** Fastify is the only DB client; the mobile app never talks to Supabase directly. Security boundary is API RBAC, not RLS. Service role key stays server-side, never `VITE_`-prefixed. Better Auth (not Supabase Auth/GoTrue) still owns identity — reaffirmed now that GoTrue is sitting in the same project.
+
 ## 2026-06-27 (Frontend)
 
 - **Monorepo: pnpm workspaces** (`apps/mobile` + `packages/shared`). Clean separation, shared types.

@@ -1,23 +1,18 @@
-import { render, screen } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
-import { TopAppBar } from './TopAppBar'
-
-describe('TopAppBar', () => {
-  it('renders STAT branding', () => {
-    render(<TopAppBar />)
-    expect(screen.getByText('STAT')).toBeInTheDocument()
-  })
-
-  it('renders CALL DISPATCH button with tel link', () => {
-    render(<TopAppBar />)
-    const link = screen.getByRole('link', { name: /call dispatch/i })
-    expect(link).toBeInTheDocument()
-    expect(link).toHaveAttribute('href', 'tel:911')
-  })
-
-  it('applies safe-area-top padding', () => {
-    render(<TopAppBar />)
-    const header = screen.getByRole('banner')
-    expect(header).toHaveClass('safe-area-top')
-  })
-})
+import { render, screen } from "@testing-library/react";
+import { it, expect } from "vitest";
+import { TopAppBar } from "./TopAppBar";
+it("shows branding and guest access without an unverified emergency phone link", () => {
+  render(<TopAppBar />);
+  expect(screen.getByRole("link", { name: "STAT Home" })).toHaveAttribute(
+    "href",
+    "/",
+  );
+  expect(screen.getByRole("link", { name: "Guest" })).toHaveAttribute(
+    "href",
+    "/profile",
+  );
+  expect(
+    screen.queryByRole("link", { name: /Call Dispatch/ }),
+  ).not.toBeInTheDocument();
+  expect(screen.getByRole("banner")).toHaveClass("safe-area-top");
+});

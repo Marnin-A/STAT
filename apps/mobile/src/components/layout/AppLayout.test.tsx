@@ -30,7 +30,7 @@ describe('AppLayout', () => {
     renderLayout()
 
     expect(screen.getByText('STAT')).toBeInTheDocument()
-    expect(screen.getByText('Dashboard')).toBeInTheDocument()
+    expect(screen.getByText('Home')).toBeInTheDocument()
   })
 
   it('renders children content', () => {

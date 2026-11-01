@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>STAT — Request Received</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary": "#044f47",
+            "inverse-surface": "#2e3130",
+            "surface-variant": "#e1e3e1",
+            "secondary-ink": "#52525B",
+            "on-tertiary": "#ffffff",
+            "secondary-fixed-dim": "#c7c5d0",
+            "surface-container-lowest": "#ffffff",
+            "tertiary-container": "#864f3c",
+            "surface-dim": "#d8dad9",
+            "surface-bright": "#f8faf8",
+            "on-error-container": "#93000a",
+            "outline-variant": "#bfc9c6",
+            "outline": "#6f7977",
+            "surface-container-highest": "#e1e3e1",
+            "on-tertiary-fixed-variant": "#6b3928",
+            "on-secondary-container": "#62626b",
+            "surface-white": "#FFFFFF",
+            "quiet-zinc": "#F4F4F5",
+            "emergency-wash": "#FCECEF",
+            "surface-container-high": "#e7e9e7",
+            "charcoal-ink": "#18181B",
+            "muted-teal": "#28675F",
+            "warning-ink": "#854D0E",
+            "on-primary-fixed": "#00201c",
+            "on-surface-variant": "#3f4947",
+            "surface-tint": "#296860",
+            "secondary-fixed": "#e3e1ec",
+            "secondary": "#5e5e67",
+            "inverse-on-surface": "#eff1ef",
+            "primary-fixed-dim": "#94d2c8",
+            "on-primary-fixed-variant": "#065048",
+            "on-tertiary-container": "#ffcbbb",
+            "tertiary-fixed": "#ffdbcf",
+            "tertiary": "#6a3827",
+            "on-secondary-fixed": "#1a1b23",
+            "warning-wash": "#FEF9C3",
+            "secondary-container": "#e0dee9",
+            "tertiary-fixed-dim": "#feb59d",
+            "whisper-border": "#E4E4E7",
+            "surface": "#f8faf8",
+            "on-secondary-fixed-variant": "#46464f",
+            "background": "#f8faf8",
+            "inverse-primary": "#94d2c8",
+            "emergency-red": "#A61D35",
+            "primary-container": "#28675f",
+            "on-error": "#ffffff",
+            "error": "#ba1a1a",
+            "teal-wash": "#EAF3F1",
+            "on-primary-container": "#a4e3d8",
+            "error-container": "#ffdad6",
+            "on-background": "#191c1b",
+            "surface-container": "#eceeec",
+            "on-surface": "#191c1b",
+            "primary-fixed": "#b0efe4",
+            "on-tertiary-fixed": "#350f03",
+            "on-secondary": "#ffffff",
+            "canvas-neutral": "#FAFAFA",
+            "surface-container-low": "#f2f4f2",
+            "on-primary": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "card": "1.25rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "gutter": "1rem",
+            "margin": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-sm": ["Geist", "sans-serif"],
+            "body-sm": ["Geist", "sans-serif"],
+            "headline-md": ["Geist", "sans-serif"],
+            "headline-lg": ["Geist", "sans-serif"],
+            "body-lg": ["Geist", "sans-serif"],
+            "numeric-data": ["Geist Mono", "monospace"]
+          },
+          "fontSize": {
+            "headline-sm": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "numeric-data": ["28px", { "lineHeight": "36px", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #FAFAFA;
+      color: #18181B;
+      font-family: 'Geist', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .badge-mono {
+      font-family: 'Geist Mono', monospace;
+      font-feature-settings: "tnum" 1;
+    }
+    @keyframes gentlePulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .pulse-subtle {
+      animation: gentlePulse 2.8s ease-in-out infinite;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-canvas-neutral text-charcoal-ink antialiased min-h-screen flex flex-col justify-between selection:bg-teal-wash selection:text-primary">
+<!-- Top App Bar Component (JSON: TopAppBar) -->
+<header class="sticky top-0 z-40 bg-surface-white border-b border-whisper-border">
+<div class="flex justify-between items-center w-full px-5 py-3 max-w-md mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]" data-icon="local_hospital">local_hospital</span>
+<span class="text-headline-sm font-headline-sm font-bold tracking-tight text-primary">STAT</span>
+</div>
+<div class="flex items-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium tracking-wide uppercase bg-quiet-zinc text-secondary-ink border border-whisper-border">
+          Demo
+        </span>
+</div>
+</div>
+</header>
+<!-- Main Canvas Content Area -->
+<main class="flex-1 w-full max-w-md mx-auto px-5 pt-4 pb-28 flex flex-col gap-4">
+<!-- Primary Heading and Server Acknowledgement Banner -->
+<section class="flex flex-col gap-1.5">
+<div class="inline-flex items-center gap-1.5 self-start px-2.5 py-1 rounded-full bg-quiet-zinc border border-whisper-border text-secondary-ink text-body-sm font-body-sm badge-mono">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-muted-teal"></span>
+<span>Incident DEMO-1042 · Synthetic fixture</span>
+</div>
+<h1 class="text-headline-md font-headline-md text-charcoal-ink mt-1 tracking-tight">
+        Request received
+      </h1>
+<p class="text-body-sm font-body-sm text-secondary-ink leading-relaxed">
+        Our central coordination server confirmed your intake. The request is currently queued for an available emergency dispatcher in your jurisdiction.
+      </p>
+</section>
+<!-- Calming Status Card: Awaiting Dispatcher Review -->
+<section class="rounded-card bg-teal-wash border border-[#C6DDD8] p-4.5 flex flex-col gap-2.5">
+<div class="flex items-center gap-2">
+<div class="flex items-center justify-center w-7 h-7 rounded-full bg-surface-white text-muted-teal shadow-xs">
+<span class="material-symbols-outlined text-[18px] pulse-subtle" data-icon="hourglass_top">hourglass_top</span>
+</div>
+<h2 class="text-body-lg font-headline-sm font-semibold text-primary">
+          Awaiting dispatcher review
+        </h2>
+</div>
+<div class="bg-surface-white/80 rounded-xl p-3 border border-[#D5E8E4] flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-secondary-ink text-body-sm font-body-sm">
+<span class="material-symbols-outlined text-[16px] text-muted-teal" data-icon="info">info</span>
+<span class="font-medium text-charcoal-ink">No responder assigned yet.</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary-ink leading-normal pl-5">
+          Dispatchers review incoming incidents in verified queue order. You will be updated here the moment personnel are tasked.
+        </p>
+</div>
+</section>
+<!-- Structured Vertical Progress Tracker -->
+<section class="rounded-card bg-surface-white border border-whisper-border p-4.5 flex flex-col gap-3">
+<div class="flex items-center justify-between pb-1 border-b border-whisper-border/60">
+<h3 class="text-body-sm font-headline-sm font-semibold text-charcoal-ink">
+          Response progress
+        </h3>
+<span class="text-[12px] font-body-sm text-secondary-ink badge-mono">Step 2 of 4</span>
+</div>
+<!-- Step List -->
+<ol aria-label="Incident response steps" class="relative flex flex-col space-y-4 pt-1">
+<!-- Step 1: Completed -->
+<li class="relative flex items-start gap-3.5">
+<div class="flex flex-col items-center">
+<div class="w-7 h-7 rounded-full bg-teal-wash text-muted-teal border border-muted-teal/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[16px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="w-[2px] h-7 bg-muted-teal/40 mt-1"></div>
+</div>
+<div class="flex flex-col pt-0.5">
+<span class="text-body-sm font-headline-sm font-semibold text-charcoal-ink">Request received</span>
+<span class="text-[13px] font-body-sm text-secondary-ink">Transmitted and logged by coordination server</span>
+</div>
+</li>
+<!-- Step 2: In Progress / Current -->
+<li class="relative flex items-start gap-3.5">
+<div class="flex flex-col items-center">
+<div class="w-7 h-7 rounded-full bg-muted-teal text-surface-white flex items-center justify-center shrink-0 shadow-xs ring-4 ring-teal-wash">
+<span class="material-symbols-outlined text-[15px]" data-icon="sync">sync</span>
+</div>
+<div class="w-[2px] h-7 bg-whisper-border mt-1"></div>
+</div>
+<div class="flex flex-col pt-0.5">
+<div class="flex items-center gap-2">
+<span class="text-body-sm font-headline-sm font-semibold text-primary">Dispatcher review</span>
+<span class="px-1.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded bg-teal-wash text-primary border border-primary/20">Active</span>
+</div>
+<span class="text-[13px] font-body-sm text-secondary-ink leading-snug">Case queued for operator verification &amp; resource allocation</span>
+</div>
+</li>
+<!-- Step 3: Pending -->
+<li class="relative flex items-start gap-3.5">
+<div class="flex flex-col items-center">
+<div class="w-7 h-7 rounded-full bg-quiet-zinc text-secondary-ink/60 border border-whisper-border flex items-center justify-center shrink-0">
+<span class="text-[12px] font-numeric-data font-medium">3</span>
+</div>
+<div class="w-[2px] h-7 bg-whisper-border mt-1"></div>
+</div>
+<div class="flex flex-col pt-0.5">
+<span class="text-body-sm font-headline-sm font-medium text-secondary-ink">Responder assigned</span>
+<span class="text-[13px] font-body-sm text-secondary-ink/70">Awaiting available unit confirmation</span>
+</div>
+</li>
+<!-- Step 4: Pending -->
+<li class="relative flex items-start gap-3.5">
+<div class="flex flex-col items-center">
+<div class="w-7 h-7 rounded-full bg-quiet-zinc text-secondary-ink/60 border border-whisper-border flex items-center justify-center shrink-0">
+<span class="text-[12px] font-numeric-data font-medium">4</span>
+</div>
+</div>
+<div class="flex flex-col pt-0.5">
+<span class="text-body-sm font-headline-sm font-medium text-secondary-ink">Help on the way</span>
+<span class="text-[13px] font-body-sm text-secondary-ink/70">Unit dispatched with direct telemetry</span>
+</div>
+</li>
+</ol>
+</section>
+<!-- Optional Next Actions Card -->
+<section class="rounded-card bg-surface-white border border-whisper-border p-4.5 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h3 class="text-body-sm font-headline-sm font-semibold text-charcoal-ink">
+          Supplemental details
+        </h3>
+<span class="text-[11px] font-medium tracking-wide uppercase px-2 py-0.5 rounded bg-quiet-zinc text-secondary-ink">Optional</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary-ink leading-relaxed">
+        You may attach additional context while waiting. This helps the dispatcher brief clinical responders before dispatch.
+      </p>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-2.5 pt-1">
+<!-- Primary Button: Add contact details -->
+<button class="w-full min-h-[50px] px-4 py-3 rounded-xl bg-muted-teal text-surface-white font-headline-sm text-body-sm font-medium flex items-center justify-center gap-2 hover:bg-primary active:scale-[0.98] transition duration-150" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_call">add_call</span>
+<span>Add contact details</span>
+</button>
+<!-- Secondary Button: Share or update location -->
+<button class="w-full min-h-[48px] px-4 py-2.5 rounded-xl bg-quiet-zinc text-charcoal-ink border border-whisper-border font-headline-sm text-body-sm font-medium flex items-center justify-center gap-2 hover:bg-surface-container active:scale-[0.98] transition duration-150" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary-ink" data-icon="edit_location">edit_location</span>
+<span>Share or update location</span>
+</button>
+</div>
+<!-- Privacy reassurance note -->
+<div class="flex items-start gap-2 pt-1 border-t border-whisper-border/70 mt-1">
+<span class="material-symbols-outlined text-[15px] text-secondary-ink shrink-0 mt-0.5" data-icon="lock">lock</span>
+<p class="text-[12px] font-body-sm text-secondary-ink leading-normal">
+          Only your assigned care team can access details you choose to share.
+        </p>
+</div>
+</section>
+<!-- Secondary Safe Zone: Cancel Request -->
+<section class="mt-4 pt-2 flex flex-col items-center gap-2">
+<button class="w-full min-h-[48px] px-4 py-2.5 rounded-xl border border-whisper-border bg-surface-white text-secondary-ink text-body-sm font-headline-sm font-medium hover:text-charcoal-ink hover:border-outline-variant active:scale-[0.98] transition duration-150 flex items-center justify-center gap-2" onclick="confirmCancelPrompt()" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="close">close</span>
+<span>Cancel request</span>
+</button>
+<span class="text-[12px] font-body-sm text-secondary-ink text-center">
+        Tapping asks for brief confirmation before releasing your queue slot.
+      </span>
+</section>
+<!-- Synthetic Safe Environment Disclaimer -->
+<footer class="mt-2 text-center">
+<p class="text-[12px] font-body-sm text-secondary-ink/80 badge-mono">
+        Demo only · No real services contacted
+      </p>
+</footer>
+</main>
+<!-- Bottom Navigation Bar Component (JSON: BottomNavBar) -->
+<!-- Contextual lock: "Activity" is ACTIVE, Home & Profile INACTIVE -->
+<nav aria-label="Bottom Navigation" class="fixed bottom-0 left-0 w-full z-50 flex flex-col items-center max-w-md mx-auto pb-safe bg-surface-white border-t border-whisper-border shadow-md">
+<div class="flex items-center justify-around w-full py-2 px-3">
+<!-- Destination 1: Home (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary active:scale-[0.96] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="emergency">emergency</span>
+<span class="text-[11px] font-medium mt-0.5 tracking-tight">Home</span>
+</a>
+<!-- Destination 2: Activity (Active Tab: Mapped directly to active response status) -->
+<a aria-current="page" class="flex flex-col items-center justify-center text-primary bg-primary-fixed rounded-full px-4 py-1 active:scale-[0.96] transition-transform duration-150 shadow-xs" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="history" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="text-[11px] font-semibold mt-0.5 tracking-tight">Activity</span>
+</a>
+<!-- Destination 3: Profile (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary active:scale-[0.96] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="person">person</span>
+<span class="text-[11px] font-medium mt-0.5 tracking-tight">Profile</span>
+</a>
+</div>
+</nav>
+<!-- Safe cancellation confirmation modal micro-interaction -->
+<dialog class="backdrop:bg-charcoal-ink/30 rounded-2xl p-5 border border-whisper-border bg-surface-white text-charcoal-ink max-w-xs mx-auto shadow-lg" id="cancel-dialog">
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-ink" data-icon="help_outline">help_outline</span>
+<h4 class="font-headline-sm text-body-lg font-semibold">Cancel this request?</h4>
+</div>
+<p class="text-body-sm font-body-sm text-secondary-ink leading-relaxed">
+        This is a prototype simulation. Confirming will reset your demonstration incident queue state.
+      </p>
+<div class="flex flex-col gap-2 pt-2">
+<button class="w-full py-2.5 rounded-lg bg-quiet-zinc text-charcoal-ink text-body-sm font-medium hover:bg-whisper-border" onclick="document.getElementById('cancel-dialog').close()" type="button">
+          Keep request open
+        </button>
+<button class="w-full py-2.5 rounded-lg text-emergency-red hover:bg-emergency-wash text-body-sm font-medium transition" onclick="document.getElementById('cancel-dialog').close()" type="button">
+          Confirm cancellation
+        </button>
+</div>
+</div>
+</dialog>
+<script>
+    function confirmCancelPrompt() {
+      const dialog = document.getElementById('cancel-dialog');
+      if (dialog && typeof dialog.showModal === 'function') {
+        dialog.showModal();
+      }
+    }
+  </script>
+</body></html>

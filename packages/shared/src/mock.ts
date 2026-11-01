@@ -228,6 +228,17 @@ export class MockApiClient implements ApiClient {
   private telemetry = new Map<string, TelemetrySample[]>()
   private replayed = new Set<string>()
 
+  /** Explicit synthetic scenarios; omitted preserves legacy test fixtures. */
+  constructor(seed?: { incidents: Incident[]; units: Unit[]; hospitals: Hospital[]; dispatches?: Dispatch[] }) {
+    if (seed) {
+      const copy = JSON.parse(JSON.stringify(seed)) as NonNullable<typeof seed>
+      this.incidents = copy.incidents
+      this.units = copy.units
+      this.hospitals = copy.hospitals
+      this.dispatches = copy.dispatches ?? []
+    }
+  }
+
   private find(incidentId: string): Incident {
     const found = this.incidents.find((i) => i.id === incidentId)
     if (!found) throw new Error(`incident ${incidentId} not found`)

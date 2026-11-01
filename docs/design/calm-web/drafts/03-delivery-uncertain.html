@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>STAT · Delivery not confirmed</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary": "#ffffff",
+            "on-surface": "#191c1b",
+            "muted-teal": "#28675F",
+            "teal-wash": "#EAF3F1",
+            "on-secondary-fixed": "#1a1b23",
+            "tertiary-container": "#864f3c",
+            "secondary-fixed-dim": "#c7c5d0",
+            "outline": "#6f7977",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed": "#350f03",
+            "emergency-wash": "#FCECEF",
+            "primary-container": "#28675f",
+            "on-tertiary-container": "#ffcbbb",
+            "tertiary-fixed": "#ffdbcf",
+            "charcoal-ink": "#18181B",
+            "surface-variant": "#e1e3e1",
+            "surface-white": "#FFFFFF",
+            "on-secondary-container": "#62626b",
+            "error": "#ba1a1a",
+            "inverse-primary": "#94d2c8",
+            "secondary-ink": "#52525B",
+            "on-error": "#ffffff",
+            "surface-dim": "#d8dad9",
+            "primary": "#044f47",
+            "tertiary-fixed-dim": "#feb59d",
+            "surface-container-high": "#e7e9e7",
+            "quiet-zinc": "#F4F4F5",
+            "warning-ink": "#854D0E",
+            "surface-container-low": "#f2f4f2",
+            "secondary-container": "#e0dee9",
+            "on-background": "#191c1b",
+            "secondary": "#5e5e67",
+            "surface-container-lowest": "#ffffff",
+            "primary-fixed-dim": "#94d2c8",
+            "on-primary-fixed-variant": "#065048",
+            "on-tertiary-fixed-variant": "#6b3928",
+            "surface-bright": "#f8faf8",
+            "inverse-on-surface": "#eff1ef",
+            "canvas-neutral": "#FAFAFA",
+            "on-surface-variant": "#3f4947",
+            "inverse-surface": "#2e3130",
+            "surface-tint": "#296860",
+            "primary-fixed": "#b0efe4",
+            "tertiary": "#6a3827",
+            "warning-wash": "#FEF9C3",
+            "outline-variant": "#bfc9c6",
+            "surface-container-highest": "#e1e3e1",
+            "whisper-border": "#E4E4E7",
+            "secondary-fixed": "#e3e1ec",
+            "on-tertiary": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-primary-fixed": "#00201c",
+            "background": "#f8faf8",
+            "surface": "#f8faf8",
+            "on-error-container": "#93000a",
+            "surface-container": "#eceeec",
+            "on-secondary-fixed-variant": "#46464f",
+            "on-primary-container": "#a4e3d8",
+            "emergency-red": "#A61D35"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1.25rem",
+            "3xl": "1.5rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "margin": "1.5rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Geist", "sans-serif"],
+            "headline-md": ["Geist", "sans-serif"],
+            "headline-sm": ["Geist", "sans-serif"],
+            "numeric-data": ["Geist Mono", "monospace"],
+            "body-sm": ["Geist", "sans-serif"],
+            "body-lg": ["Geist", "sans-serif"]
+          },
+          "fontSize": {
+            "headline-lg": [
+              "32px",
+              {
+                "lineHeight": "40px",
+                "fontWeight": "600"
+              }
+            ],
+            "headline-md": [
+              "24px",
+              {
+                "lineHeight": "32px",
+                "fontWeight": "600"
+              }
+            ],
+            "headline-sm": [
+              "18px",
+              {
+                "lineHeight": "26px",
+                "fontWeight": "600"
+              }
+            ],
+            "numeric-data": [
+              "28px",
+              {
+                "lineHeight": "36px",
+                "fontWeight": "500"
+              }
+            ],
+            "body-sm": [
+              "14px",
+              {
+                "lineHeight": "20px",
+                "fontWeight": "400"
+              }
+            ],
+            "body-lg": [
+              "16px",
+              {
+                "lineHeight": "24px",
+                "fontWeight": "400"
+              }
+            ]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-canvas-neutral text-charcoal-ink font-body-lg antialiased min-h-screen flex flex-col justify-between selection:bg-teal-wash">
+<!-- Container clamped for mobile-first viewport (390px baseline) -->
+<div class="w-full max-w-md mx-auto min-h-screen flex flex-col bg-canvas-neutral relative pb-28">
+<!-- TopAppBar (From Shared Components JSON) -->
+<header class="bg-surface text-primary border-b border-surface-variant shadow-sm flex justify-between items-center w-full px-5 py-3.5 max-w-md mx-auto sticky top-0 z-40">
+<div class="flex items-center gap-2.5">
+<span aria-hidden="true" class="material-symbols-outlined text-primary text-[22px]">local_hospital</span>
+<span class="font-headline-md text-headline-md font-bold tracking-tight text-primary">STAT</span>
+</div>
+<div>
+<span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-quiet-zinc text-secondary-ink border border-whisper-border">Demo</span>
+</div>
+</header>
+<!-- Main Content Canvas (20px gutters = px-5) -->
+<main class="flex-1 px-5 pt-6 pb-4 flex flex-col gap-5">
+<!-- Heading Section -->
+<section class="space-y-1">
+<h1 class="font-headline-md text-[26px] leading-[34px] font-semibold text-charcoal-ink">
+          Delivery not confirmed
+        </h1>
+<p class="font-body-sm text-body-sm text-secondary-ink">
+          Connection interrupted before dispatch receipt
+        </p>
+</section>
+<!-- Prominent Static Warning Container -->
+<section class="bg-warning-wash border border-whisper-border rounded-2xl p-4.5 flex gap-3.5 items-start">
+<div class="mt-0.5 text-warning-ink shrink-0">
+<span aria-hidden="true" class="material-symbols-outlined text-2xl">cloud_off</span>
+</div>
+<div class="space-y-2">
+<p class="font-body-sm text-body-sm text-warning-ink leading-relaxed">
+            Your connection dropped. We haven't confirmed your request reached dispatch.
+          </p>
+<div class="bg-white/80 border border-whisper-border rounded-lg px-3 py-2">
+<p class="font-body-sm text-body-sm font-semibold text-emergency-red">
+              Do not assume help is on the way.
+            </p>
+</div>
+</div>
+</section>
+<!-- Details & Clarification Card -->
+<!-- Direct Phone Fallback Section -->
+<!-- Primary & Secondary Actions Block -->
+<section class="pt-2 space-y-3">
+<!-- Dominant Primary Button: 56px height, muted teal -->
+<button class="w-full h-14 bg-muted-teal hover:bg-primary text-on-primary font-headline-sm text-headline-sm font-semibold rounded-xl flex items-center justify-center gap-2.5 active:scale-[0.98] transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" type="button">
+<span aria-hidden="true" class="material-symbols-outlined text-2xl">refresh</span>
+<span>Check request &amp; retry</span>
+</button>
+<!-- Direct Helper text below button -->
+<p class="font-body-sm text-body-sm text-secondary-ink text-center px-2">
+          Check for an existing request before sending again.
+        </p>
+<!-- Quiet Secondary Action Link: 48px touch target -->
+<div class="pt-1 flex justify-center">
+<a class="h-12 px-6 inline-flex items-center justify-center font-body-sm text-body-sm font-medium text-secondary-ink hover:text-charcoal-ink active:scale-[0.98] transition-all" href="#">
+            Back to Home
+          </a>
+</div>
+</section>
+<!-- Transparent Disclaimer -->
+<footer class="pt-1 pb-2">
+<p class="text-xs text-center text-secondary-ink/80 tracking-normal">
+          Demo only · No real services contacted
+        </p>
+</footer>
+</main>
+<!-- BottomNavBar (From Shared Components JSON) -->
+<nav class="bg-surface text-primary border-t border-surface-variant shadow-md fixed bottom-0 left-0 w-full z-50 flex flex-col items-center max-w-md mx-auto pb-safe">
+<div class="w-full flex justify-around items-center px-4 py-2">
+<!-- Home (Inactive destination) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary active:scale-[0.96] transition-transform duration-150" href="#">
+<span aria-hidden="true" class="material-symbols-outlined text-2xl">emergency</span>
+<span class="text-xs font-medium tracking-tight mt-0.5">Home</span>
+</a>
+<!-- Activity (Active destination: Reflects current unconfirmed SOS transmission attempt) -->
+<a class="flex flex-col items-center justify-center text-muted-teal bg-teal-wash rounded-full px-4 py-1.5 active:scale-[0.96] transition-transform duration-150" href="#"><span aria-hidden="true" class="material-symbols-outlined text-2xl font-bold">history</span><span class="text-xs font-semibold tracking-tight mt-0.5">Activity</span></a>
+<!-- Profile (Inactive destination) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary active:scale-[0.96] transition-transform duration-150" href="#">
+<span aria-hidden="true" class="material-symbols-outlined text-2xl">person</span>
+<span class="text-xs font-medium tracking-tight mt-0.5">Profile</span>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

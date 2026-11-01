@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>STAT — Citizen Profile</title>
+<!-- Google Fonts Preconnect -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<!-- Geist & Geist Mono Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration Verbatim -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "charcoal-ink": "#18181B",
+            "whisper-border": "#E4E4E7",
+            "secondary-ink": "#52525B",
+            "surface-dim": "#d8dad9",
+            "teal-wash": "#EAF3F1",
+            "surface": "#f8faf8",
+            "on-tertiary-fixed": "#350f03",
+            "on-primary-container": "#a4e3d8",
+            "primary": "#044f47",
+            "tertiary-container": "#864f3c",
+            "warning-ink": "#854D0E",
+            "secondary-fixed-dim": "#c7c5d0",
+            "tertiary": "#6a3827",
+            "on-secondary": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "surface-container-highest": "#e1e3e1",
+            "surface-container": "#eceeec",
+            "primary-container": "#28675f",
+            "on-secondary-fixed-variant": "#46464f",
+            "error": "#ba1a1a",
+            "on-secondary-fixed": "#1a1b23",
+            "inverse-surface": "#2e3130",
+            "on-primary-fixed": "#00201c",
+            "on-surface": "#191c1b",
+            "secondary": "#5e5e67",
+            "on-error-container": "#93000a",
+            "emergency-red": "#A61D35",
+            "quiet-zinc": "#F4F4F5",
+            "outline-variant": "#bfc9c6",
+            "surface-tint": "#296860",
+            "tertiary-fixed": "#ffdbcf",
+            "on-tertiary-fixed-variant": "#6b3928",
+            "background": "#f8faf8",
+            "on-surface-variant": "#3f4947",
+            "error-container": "#ffdad6",
+            "outline": "#6f7977",
+            "on-primary-fixed-variant": "#065048",
+            "on-secondary-container": "#62626b",
+            "emergency-wash": "#FCECEF",
+            "warning-wash": "#FEF9C3",
+            "on-error": "#ffffff",
+            "secondary-container": "#e0dee9",
+            "primary-fixed-dim": "#94d2c8",
+            "muted-teal": "#28675F",
+            "on-primary": "#ffffff",
+            "canvas-neutral": "#FAFAFA",
+            "surface-bright": "#f8faf8",
+            "on-background": "#191c1b",
+            "on-tertiary-container": "#ffcbbb",
+            "inverse-primary": "#94d2c8",
+            "inverse-on-surface": "#eff1ef",
+            "surface-container-low": "#f2f4f2",
+            "surface-variant": "#e1e3e1",
+            "primary-fixed": "#b0efe4",
+            "surface-container-high": "#e7e9e7",
+            "secondary-fixed": "#e3e1ec",
+            "surface-container-lowest": "#ffffff",
+            "surface-white": "#FFFFFF",
+            "tertiary-fixed-dim": "#feb59d"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "margin": "1.5rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "headline-sm": [
+              "Geist",
+              "system-ui",
+              "sans-serif"
+            ],
+            "numeric-data": [
+              "Geist Mono",
+              "ui-monospace",
+              "monospace"
+            ],
+            "headline-lg": [
+              "Geist",
+              "system-ui",
+              "sans-serif"
+            ],
+            "body-lg": [
+              "Geist",
+              "system-ui",
+              "sans-serif"
+            ],
+            "headline-md": [
+              "Geist",
+              "system-ui",
+              "sans-serif"
+            ],
+            "body-sm": [
+              "Geist",
+              "system-ui",
+              "sans-serif"
+            ]
+          },
+          "fontSize": {
+            "headline-sm": [
+              "18px",
+              {
+                "lineHeight": "26px",
+                "fontWeight": "600"
+              }
+            ],
+            "numeric-data": [
+              "28px",
+              {
+                "lineHeight": "36px",
+                "fontWeight": "500"
+              }
+            ],
+            "headline-lg": [
+              "32px",
+              {
+                "lineHeight": "40px",
+                "fontWeight": "600"
+              }
+            ],
+            "body-lg": [
+              "16px",
+              {
+                "lineHeight": "24px",
+                "fontWeight": "400"
+              }
+            ],
+            "headline-md": [
+              "24px",
+              {
+                "lineHeight": "32px",
+                "fontWeight": "600"
+              }
+            ],
+            "body-sm": [
+              "14px",
+              {
+                "lineHeight": "20px",
+                "fontWeight": "400"
+              }
+            ]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+    body, button, a, h1, h2, h3, h4, p, span, div, input, label {
+      font-family: "Geist", system-ui, sans-serif;
+    }
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important;
+    }
+  </style>
+</head>
+<body class="bg-canvas-neutral text-charcoal-ink font-body-lg text-body-lg min-h-screen antialiased flex flex-col items-center selection:bg-teal-wash selection:text-primary">
+<!-- Main Mobile-First Shell Canvas (max-w-md = 448px, optimized for 390px mobile viewport) -->
+<div class="w-full max-w-md bg-canvas-neutral min-h-screen flex flex-col relative pb-28">
+<!-- 1. Top App Bar (Shared Components JSON Anchor) -->
+<header class="bg-surface dark:bg-surface border-b border-surface-variant dark:border-outline-variant shadow-sm dark:shadow-none sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-5 py-3 max-w-md mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary text-2xl" data-icon="local_hospital">local_hospital</span>
+<span class="text-headline-md font-headline-md font-bold tracking-tight text-primary dark:text-inverse-primary">STAT</span>
+</div>
+<div class="flex items-center">
+<span class="px-2.5 py-0.5 rounded-full text-body-sm font-headline-sm bg-surface-container text-secondary-ink font-medium tracking-wide">Demo</span>
+</div>
+</div>
+</header>
+<!-- Content Area: 20px padding (px-5) -->
+<main class="flex-1 px-5 pt-6 space-y-6">
+<!-- 2. Page Title Header -->
+<section class="space-y-1">
+<h1 class="text-headline-md font-headline-md text-charcoal-ink tracking-tight font-semibold">Your profile</h1>
+<p class="text-body-sm font-body-sm text-secondary-ink">Medical identity &amp; emergency responder coordination settings for Nigeria</p>
+</section>
+<!-- Reassurance Card (Signed-out Benefits) -->
+<section class="bg-surface-white rounded-3xl p-5 border border-whisper-border shadow-sm space-y-4">
+<div class="flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-full bg-teal-wash flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-2xl" data-icon="shield">shield</span>
+</div>
+<div class="space-y-1">
+<h2 class="text-headline-sm font-headline-sm text-charcoal-ink">Sign in to save your Medical ID and contacts</h2>
+<p class="text-body-sm font-body-sm text-secondary-ink leading-relaxed">Save details for the care team you choose to share with.</p>
+</div>
+</div>
+<!-- Primary Sign In Action (Min 52px height) -->
+<div class="pt-1">
+<button class="w-full h-14 bg-muted-teal text-surface-white font-headline-sm text-body-lg rounded-xl flex items-center justify-center gap-2 hover:bg-primary active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-muted-teal focus:ring-offset-2 shadow-sm font-semibold" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="login">login</span>
+<span>Sign in</span>
+</button>
+</div>
+<!-- Explicit Reassurance Context Sentence -->
+<div class="flex items-center gap-2 pt-1 text-center justify-center">
+<span class="material-symbols-outlined text-base text-secondary-ink shrink-0" data-icon="verified_user">verified_user</span>
+<p class="text-body-sm font-body-sm text-secondary-ink font-medium">
+            You don't need an account to request medical help.
+          </p>
+</div>
+</section>
+<!-- 3. Preview Rows (Signed out state, locked until sign-in) -->
+<section class="space-y-2">
+<div class="px-1 flex justify-between items-center">
+<span class="text-body-sm font-headline-sm text-secondary-ink uppercase tracking-wider font-semibold">Saved emergency data</span>
+</div>
+<div class="bg-surface-white rounded-3xl border border-whisper-border shadow-sm divide-y divide-whisper-border overflow-hidden">
+<!-- Row 1: Medical ID -->
+<div class="p-5 flex items-start justify-between gap-4 bg-surface-white">
+<div class="flex items-start gap-3.5">
+<div class="w-9 h-9 rounded-full bg-quiet-zinc flex items-center justify-center shrink-0 text-secondary-ink mt-0.5">
+<span class="material-symbols-outlined text-xl" data-icon="medical_information">medical_information</span>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="text-headline-sm font-headline-sm text-charcoal-ink">Medical ID</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-body-sm font-body-sm bg-quiet-zinc text-secondary-ink">
+<span class="material-symbols-outlined text-xs" data-icon="lock">lock</span>
+<span>Sign in to save</span>
+</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary-ink leading-relaxed">Essential details to assist emergency care teams during an in-person response.</p>
+</div>
+</div>
+</div>
+<!-- Row 2: Emergency Contacts -->
+<div class="p-5 flex items-start justify-between gap-4 bg-surface-white">
+<div class="flex items-start gap-3.5">
+<div class="w-9 h-9 rounded-full bg-quiet-zinc flex items-center justify-center shrink-0 text-secondary-ink mt-0.5">
+<span class="material-symbols-outlined text-xl" data-icon="contacts">contacts</span>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="text-headline-sm font-headline-sm text-charcoal-ink">Emergency contacts</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-body-sm font-body-sm bg-quiet-zinc text-secondary-ink">
+<span class="material-symbols-outlined text-xs" data-icon="lock">lock</span>
+<span>Sign in to save</span>
+</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary-ink leading-relaxed">Trusted individuals who can be coordinated with during urgent situations.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. Secondary Return / Anonymous SOS Link -->
+<section>
+<div class="text-center py-2"><a class="inline-flex items-center justify-center gap-1.5 text-secondary-ink hover:text-charcoal-ink text-sm font-medium transition-colors py-2 px-3 rounded-lg hover:bg-quiet-zinc" href="#request-help"><span>Need immediate assistance?</span><span class="text-muted-teal font-semibold underline underline-offset-2 flex items-center gap-1">Request medical help <span class="material-symbols-outlined text-base">arrow_forward</span></span></a></div>
+</section>
+<!-- 5. Secondary Settings & Information Navigation -->
+<section class="space-y-2">
+<h3 class="text-body-sm font-headline-sm text-secondary-ink uppercase tracking-wider font-semibold px-1">Support &amp; Privacy</h3>
+<div class="bg-surface-white rounded-3xl border border-whisper-border shadow-sm divide-y divide-whisper-border overflow-hidden">
+<!-- Settings -->
+<a class="p-4 flex items-center justify-between hover:bg-surface-container transition-colors min-h-[52px]" href="#settings">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary-ink text-xl" data-icon="settings">settings</span>
+<span class="text-body-lg font-headline-sm text-charcoal-ink font-medium">Settings</span>
+</div>
+<div class="flex items-center gap-1 text-secondary-ink">
+<span class="text-body-sm font-body-sm">Language, permissions</span>
+<span class="material-symbols-outlined text-lg" data-icon="chevron_right">chevron_right</span>
+</div>
+</a>
+<!-- Help & FAQs -->
+<a class="p-4 flex items-center justify-between hover:bg-surface-container transition-colors min-h-[52px]" href="#help">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary-ink text-xl" data-icon="help_outline">help_outline</span>
+<span class="text-body-lg font-headline-sm text-charcoal-ink font-medium">Help &amp; FAQs</span>
+</div>
+<div class="flex items-center gap-1 text-secondary-ink">
+<span class="text-body-sm font-body-sm">How response works</span>
+<span class="material-symbols-outlined text-lg" data-icon="chevron_right">chevron_right</span>
+</div>
+</a>
+<!-- Privacy notice -->
+<a class="p-4 flex items-center justify-between hover:bg-surface-container transition-colors min-h-[52px]" href="#privacy">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary-ink text-xl" data-icon="privacy_tip">privacy_tip</span>
+<span class="text-body-lg font-headline-sm text-charcoal-ink font-medium">Privacy notice</span>
+</div>
+<div class="flex items-center gap-1 text-secondary-ink">
+<span class="text-body-sm font-body-sm">Emergency data rules</span>
+<span class="material-symbols-outlined text-lg" data-icon="chevron_right">chevron_right</span>
+</div>
+</a>
+</div>
+</section>
+<!-- 6. Demo Disclaimer -->
+<footer class="pt-4 pb-2 text-center">
+<p class="text-body-sm font-body-sm text-secondary-ink text-xs">Demo only · No real services contacted</p>
+</footer>
+</main>
+<!-- 7. Bottom Navigation Bar (Shared Components JSON Anchor) -->
+<!-- Profile is the ACTIVE destination per the Semantic Shell hierarchy -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex flex-col items-center max-w-md mx-auto pb-safe bg-surface dark:bg-surface border-t border-surface-variant dark:border-outline-variant shadow-md dark:shadow-none">
+<div class="w-full flex justify-around items-center py-2 px-4 bg-surface dark:bg-surface">
+<!-- Home (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-3 py-1 hover:text-primary dark:hover:text-inverse-primary active:scale-[0.96] transition-transform duration-150" href="#home">
+<span class="material-symbols-outlined text-2xl" data-icon="emergency">emergency</span>
+<span class="text-body-sm font-headline-sm text-[12px] tracking-tight mt-0.5">Home</span>
+</a>
+<!-- Activity (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-3 py-1 hover:text-primary dark:hover:text-inverse-primary active:scale-[0.96] transition-transform duration-150" href="#activity">
+<span class="material-symbols-outlined text-2xl" data-icon="history">history</span>
+<span class="text-body-sm font-headline-sm text-[12px] tracking-tight mt-0.5">Activity</span>
+</a>
+<!-- Profile (Active per Exact Match Priority) -->
+<a class="flex flex-col items-center justify-center text-muted-teal bg-teal-wash rounded-full px-4 py-1 active:scale-[0.96] transition-transform duration-150" href="#profile"><span class="material-symbols-outlined text-2xl" data-icon="person" data-weight="fill" style="font-variation-settings: 'FILL' 1;">person</span><span class="text-body-sm font-headline-sm text-[12px] tracking-tight font-semibold mt-0.5 text-muted-teal">Profile</span></a>
+</div>
+</nav>
+</div>
+</body></html>

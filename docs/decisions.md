@@ -2,6 +2,53 @@
 
 One line per decision. Newest on top. Rationale terse.
 
+## 2026-11-01 (realistic synthetic demo users)
+- User requests populated demo users for every group: citizen, responder, dispatcher, hospital_staff and admin.
+- Synthetic personas have coherent medical/staff profiles and a shared linked response dataset. Fictional labels/emails/contact identifiers only; no real accounts or hosted writes.
+- Persona selector is explicitly demo-only, not authentication; disabled whenever a real API URL is configured. It is collapsed to keep core SOS uncluttered.
+- In-memory scenarios reset on reload or explicit reset. Switching/resetting also clears mounted pending demo request state. Real profile persistence/auth/tracking remain separate work.
+
+## 2026-11-01 (implementation approved)
+- Implement Quiet Confidence in React across medical roles; one citizen/responder Android app, dispatcher/hospital web.
+- Track the assigned responder phone, not dispatch operator. Explicit active-assignment start; background/screen-lock foreground service; no off-duty/reboot guarantee.
+- Incident-scoped citizen/hospital access, authorized agency dispatch; location/freshness/accuracy only, no route or ETA.
+- Real sharing requires Better Auth and server-owned assignments/receipt ownership. No role-header shortcut accepted.
+- First delivered source slice: citizen shell/Home/Activity/Profile/receipt. Staff/auth/tracking/native remain incomplete. No real tracking enabled.
+
+## 2026-10-28 (visual revision — no red primary action)
+
+- **Red-led design rejected.** User explicitly rejects the red medical-help button and requests a less generic theme via UI/UX Pro Max. This supersedes the earlier red-SOS allowance.
+- **Quiet Confidence proposed, not approved.** Midnight plum / soft lilac / warm ivory; integrated action tile, quieter secondary tools. Five code-native citizen reference states replace the default local review. Exact palette/layout awaits feedback; no application or backend implementation.
+- **Scope and safety unchanged.** Anonymous-capable SOS, optional location, human dispatch approval, explicit delivery state and consent remain required. Old Stitch/screens preserved; staff reskin is a later design pass.
+
+## 2026-10-28 (second decision round — all five approved)
+
+- **Calm visual direction approved.** Off-white/white surfaces, soft rounded cards, generous spacing and muted teal; red reserved for SOS/critical states. Actual draft screens still need visual review.
+- **Citizen navigation approved.** Home / Activity / Profile. Medical ID and contacts under Profile with a Home shortcut; SOS and active incident directly reachable. Settings/help secondary.
+- **Fraud policy: receive first, flag/review.** No mandatory login/OTP before SOS; deduplicate retries, offer optional callback verification, flag suspicious patterns with reasons/audit. Missing GPS/shared IP/unverified number or AI sentiment alone must not cause rejection or clinical downgrading.
+- **Saved profiles require sign-in.** SOS remains anonymous-capable. Sharing relevant profile data is explicit and incident-scoped to assigned care staff; first release includes profiles and emergency contacts.
+- **Automation boundary approved for first demo.** Automate intake processing and offer labelled AI summaries/routing suggestions; dispatcher approval still required. Autonomous dispatch is separate future evaluated scope. Real AI integration and clinical/operations reviewer availability remain unresolved.
+
+## 2026-10-28 (web demo and redesign — user confirmed)
+
+- **Redo the visual design.** Calmer, more appealing and intuitive; core features immediately reachable, secondary features progressively disclosed. The attached health-app image is visual inspiration, not a functional specification.
+- **Desktop adaptations approved in principle.** Propose dispatcher/hospital layouts using the new visual direction; obtain screen approval before implementation. Preserve old Stitch screens as historical references, not the new visual acceptance baseline.
+- **Missing states/deviations may be proposed.** Document additions and important copy/navigation changes for review; no silent redesign.
+- **Communication: persisted incident notes first.** Two-way incident chat moves to future work.
+- **Citizen SOS without mandatory login.** Fraud-control policy remains unresolved; accepting anonymous SOS does not authorize automatic dispatch.
+- **Medical profiles and family/emergency contacts: first release.** Account, consent, sharing and minimum-field details still need agreement.
+- **Separate disposable hosted Supabase project approved.** Connection/configuration and target verification still outstanding; never run destructive tests on development data.
+- **Initial delivery: mobile-focused web demo with closed synthetic-data testing.** Citizen/responder also run in the browser initially; dispatcher/hospital remain web. Android packaging follows later; one Android app remains the eventual target.
+- **Review order: design (A) → connected SOS/dispatch slice (C) → comprehensive backend hardening (B).** The connected slice still requires its minimum security/persistence safeguards; synthetic data does not justify a publicly insecure API.
+- **Automation-first aspiration, not approved autonomous clinical policy.** Explore AI sentiment assistance and human escalation. Clinical reviewer availability, model evaluation, escalation rules and dispatch authority remain unresolved; no approval to reject/downgrade SOS using sentiment or deploy autonomous clinical decisions.
+
+## 2026-10-02 (recovery scope — user confirmed)
+
+- **Design authority: Stitch.** Project `15243493749593154645`, Rapid Response Network. Existing written plans are subordinate references, not substitutes for the design.
+- **Surfaces: one Android app plus web views.** Android serves citizens/responders; dispatcher/hospital views run on web. No separate Android role apps.
+- **First release: medical SOS → dispatch → responder → hospital handoff.** Security/fire and broader integrations do not determine this slice's completion.
+- **Hosted Supabase retained.** User supplies private connection/auth configuration when required; no local Supabase stack.
+
 ## 2026-08-28 (M8 retention)
 
 - **Vitals retention redacts, it does not delete.** The NDPA obligation is to stop holding patient data; the audit trail depends on an append-only log. Deleting rows would tear holes in the version sequence every projection folds over, so the `TelemetryRecorded` event survives — who took vitals, on which incident, when — and its payload is emptied. The readings are gone; the timeline is intact.

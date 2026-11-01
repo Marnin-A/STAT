@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STAT · Responder Current Case</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Geist', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['Geist Mono', 'monospace'],
+          },
+          colors: {
+            canvas: '#FAFAFA',
+            surface: '#FFFFFF',
+            quiet: '#F4F4F5',
+            ink: '#18181B',
+            secondary: '#52525B',
+            border: '#E4E4E7',
+            teal: {
+              DEFAULT: '#28675F',
+              hover: '#20534C',
+              wash: '#EAF3F1',
+            },
+            emergency: {
+              DEFAULT: '#A61D35',
+              wash: '#FCECEF',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      background-color: #FAFAFA;
+      color: #18181B;
+      font-family: 'Geist', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-canvas text-ink flex flex-col items-center">
+
+  <!-- Mobile App Container (390px viewport standard) -->
+  <div class="w-full max-w-[420px] min-h-screen bg-canvas flex flex-col relative pb-28">
+
+    <!-- Top Header: STAT · Responder role with Demo tag -->
+    <header class="w-full bg-surface border-b border-border px-5 py-3.5 sticky top-0 z-30 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-teal text-2xl fill">local_hospital</span>
+        <div class="flex items-baseline gap-1.5">
+          <span class="font-bold text-lg tracking-tight text-teal">STAT</span>
+          <span class="text-secondary text-sm font-medium">· Responder</span>
+        </div>
+      </div>
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-quiet text-secondary border border-border">
+        Demo
+      </span>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="w-full px-5 pt-5 pb-4 flex flex-col gap-4">
+
+      <!-- Heading & Unit Status -->
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-xs font-semibold text-secondary uppercase tracking-wider">Unit 4 · Synthetic demo</span>
+        </div>
+        <h1 class="text-[26px] leading-[34px] font-semibold text-ink">
+          Your current task
+        </h1>
+      </div>
+
+      <!-- Incident Header Banner Card -->
+      <div class="bg-surface rounded-2xl p-4 border border-border shadow-sm flex flex-col gap-2">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-secondary bg-quiet px-2 py-0.5 rounded">
+              Incident DEMO-1042
+            </span>
+            <div class="text-sm font-medium text-teal mt-1 flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-teal inline-block"></span>
+              Assigned to your unit
+            </div>
+          </div>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-teal-wash text-teal border border-teal/20 text-right">
+            Accepted · Not yet en route
+          </span>
+        </div>
+      </div>
+
+      <!-- One Dominant Next Action: Start response (Min 56px / 64px prominent touch area) -->
+      <button type="button" class="w-full h-14 min-h-[56px] bg-teal hover:bg-teal-hover active:scale-[0.99] text-surface rounded-2xl font-semibold text-base flex items-center justify-center gap-2 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-teal focus:ring-offset-2">
+        <span class="material-symbols-outlined text-xl">near_me</span>
+        <span>Start response</span>
+      </button>
+
+      <!-- Step Progression: Accepted, En route, On scene, Transport, Handoff -->
+      <div class="bg-surface rounded-2xl p-4 border border-border shadow-sm">
+        <div class="text-xs font-semibold text-secondary uppercase tracking-wider mb-3">
+          Response progression
+        </div>
+        <div class="grid grid-cols-5 gap-1 text-center relative">
+          <!-- Step 1: Accepted (Active/Done) -->
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-7 h-7 rounded-full bg-teal text-surface flex items-center justify-center text-xs font-semibold">
+              <span class="material-symbols-outlined text-base">check</span>
+            </div>
+            <span class="text-[11px] font-semibold text-ink leading-tight">Accepted</span>
+          </div>
+
+          <!-- Step 2: En route (Pending) -->
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-7 h-7 rounded-full bg-quiet border border-border text-secondary flex items-center justify-center text-xs font-medium font-mono">
+              2
+            </div>
+            <span class="text-[11px] font-medium text-secondary leading-tight">En route</span>
+          </div>
+
+          <!-- Step 3: On scene -->
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-7 h-7 rounded-full bg-quiet border border-border text-secondary flex items-center justify-center text-xs font-medium font-mono">
+              3
+            </div>
+            <span class="text-[11px] font-medium text-secondary leading-tight">On scene</span>
+          </div>
+
+          <!-- Step 4: Transport -->
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-7 h-7 rounded-full bg-quiet border border-border text-secondary flex items-center justify-center text-xs font-medium font-mono">
+              4
+            </div>
+            <span class="text-[11px] font-medium text-secondary leading-tight">Transport</span>
+          </div>
+
+          <!-- Step 5: Handoff -->
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-7 h-7 rounded-full bg-quiet border border-border text-secondary flex items-center justify-center text-xs font-medium font-mono">
+              5
+            </div>
+            <span class="text-[11px] font-medium text-secondary leading-tight">Handoff</span>
+          </div>
+        </div>
+        <p class="text-xs text-secondary mt-3 pt-2.5 border-t border-border/60">
+          Manual confirmation required. No automatic status transitions.
+        </p>
+      </div>
+
+      <!-- Case Summary Card (Zero false data: unrecorded/unshared stated plainly) -->
+      <div class="bg-surface rounded-2xl p-4 border border-border shadow-sm flex flex-col gap-3">
+        <div class="text-xs font-semibold text-secondary uppercase tracking-wider">
+          Case intake summary
+        </div>
+
+        <div class="flex flex-col gap-2.5 text-sm">
+          <!-- Patient Identity -->
+          <div class="flex items-start gap-2.5">
+            <span class="material-symbols-outlined text-secondary text-lg mt-0.5">person</span>
+            <div class="flex-1">
+              <div class="text-xs text-secondary font-medium">Patient identity</div>
+              <div class="text-ink font-medium">Patient identity not provided</div>
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="flex items-start gap-2.5">
+            <span class="material-symbols-outlined text-secondary text-lg mt-0.5">location_off</span>
+            <div class="flex-1">
+              <div class="text-xs text-secondary font-medium">Citizen location</div>
+              <div class="text-ink font-medium">Location not yet shared</div>
+            </div>
+          </div>
+
+          <!-- Clinical Observations -->
+          <div class="flex items-start gap-2.5">
+            <span class="material-symbols-outlined text-secondary text-lg mt-0.5">clinical_notes</span>
+            <div class="flex-1">
+              <div class="text-xs text-secondary font-medium">Clinical observations</div>
+              <div class="text-ink font-medium">Observations not recorded</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Action explicitly unavailable -->
+        <div class="mt-1 pt-3 border-t border-border flex items-center justify-between gap-3 bg-quiet/60 p-2.5 rounded-xl">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary text-lg">directions</span>
+            <div>
+              <span class="text-xs font-semibold text-secondary block">Turn-by-turn navigation</span>
+              <span class="text-xs text-secondary">Available when location is shared</span>
+            </div>
+          </div>
+          <button disabled class="h-9 px-3 rounded-lg bg-quiet border border-border text-secondary/60 text-xs font-medium cursor-not-allowed">
+            Open map
+          </button>
+        </div>
+      </div>
+
+      <!-- Secondary Labelled Rows: Case details, Medical ID, Incident notes -->
+      <div class="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden divide-y divide-border">
+        
+        <!-- Row: Case details -->
+        <a href="#" class="p-4 flex items-center justify-between hover:bg-quiet/50 transition-colors">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-teal text-xl">folder_open</span>
+            <div>
+              <div class="text-sm font-semibold text-ink">Case details</div>
+              <div class="text-xs text-secondary">Intake timestamp, category & queue logs</div>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-secondary text-lg">chevron_right</span>
+        </a>
+
+        <!-- Row: Medical ID (Not shared) -->
+        <a href="#" class="p-4 flex items-center justify-between hover:bg-quiet/50 transition-colors">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-teal text-xl">badge</span>
+            <div>
+              <div class="text-sm font-semibold text-ink flex items-center gap-2">
+                <span>Medical ID</span>
+                <span class="text-xs font-normal text-secondary bg-quiet px-2 py-0.5 rounded">Not shared</span>
+              </div>
+              <div class="text-xs text-secondary">Awaiting citizen incident consent</div>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-secondary text-lg">chevron_right</span>
+        </a>
+
+        <!-- Row: Incident notes -->
+        <div class="p-4 flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-teal text-xl">note_stack</span>
+              <div>
+                <div class="text-sm font-semibold text-ink">Incident notes</div>
+                <div class="text-xs text-secondary">Time-stamped responder records (no chat)</div>
+              </div>
+            </div>
+            <button type="button" class="text-xs font-semibold text-teal hover:underline flex items-center gap-1 min-h-[36px] px-2 py-1 rounded hover:bg-teal-wash">
+              <span class="material-symbols-outlined text-base">add</span>
+              <span>Add incident note</span>
+            </button>
+          </div>
+          <div class="bg-quiet rounded-xl p-3 text-xs text-secondary border border-border/60">
+            No notes logged yet for DEMO-1042. Use incident notes to capture field arrival and clinical observations.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Synthetic Demo Notice (Subtle, honest disclaimer) -->
+      <div class="text-center py-2">
+        <p class="text-xs text-secondary">
+          Demo only · Synthetic incident fixture · No real services contacted
+        </p>
+      </div>
+
+    </main>
+
+    <!-- Role-Specific Minimal Bottom Navigation: Tasks / Current case / Profile -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-[420px] mx-auto bg-surface border-t border-border py-2 px-6 flex justify-around items-center z-40">
+      
+      <!-- Tab 1: Tasks -->
+      <a href="#" class="flex flex-col items-center gap-1 py-1 px-3 text-secondary hover:text-ink transition-colors">
+        <span class="material-symbols-outlined text-xl">checklist</span>
+        <span class="text-[11px] font-medium">Tasks</span>
+      </a>
+
+      <!-- Tab 2: Current case (Active role tab) -->
+      <a href="#" class="flex flex-col items-center gap-1 py-1 px-4 bg-teal-wash text-teal rounded-full font-semibold transition-colors">
+        <span class="material-symbols-outlined text-xl fill">medical_services</span>
+        <span class="text-[11px]">Current case</span>
+      </a>
+
+      <!-- Tab 3: Profile -->
+      <a href="#" class="flex flex-col items-center gap-1 py-1 px-3 text-secondary hover:text-ink transition-colors">
+        <span class="material-symbols-outlined text-xl">account_circle</span>
+        <span class="text-[11px] font-medium">Profile</span>
+      </a>
+
+    </nav>
+
+  </div>
+
+</body>
+</html>

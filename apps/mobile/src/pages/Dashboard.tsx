@@ -1,117 +1,185 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useApi } from '../api/ApiProvider'
-import { useGeolocation } from '../hooks/useGeolocation'
-import { useDeviceId } from '../hooks/useDeviceId'
-import { useHaptics } from '../hooks/useHaptics'
-import { ActionButton } from '../components/ui/ActionButton'
-import type { IncidentType } from '@stat/shared'
-
-const emergencyTypes: { type: IncidentType; label: string; icon: string }[] = [
-  { type: 'medical', label: 'Medical', icon: 'local_hospital' },
-  { type: 'security', label: 'Security', icon: 'shield' },
-  { type: 'fire', label: 'Fire', icon: 'local_fire_department' },
-]
-
+import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useApi } from "../api/ApiProvider";
+import { useGeolocation } from "../hooks/useGeolocation";
+import { useDeviceId } from "../hooks/useDeviceId";
+import { useHaptics } from "../hooks/useHaptics";
+import { Icon } from "../components/ui/Icon";
+import type { CreateIncidentDTO } from "@stat/shared";
+const pendingKey = "stat_pending_medical_sos";
+type Pending = { key: string; data: CreateIncidentDTO };
+function readPending(): Pending | null {
+  try {
+    const p = JSON.parse(sessionStorage.getItem(pendingKey) ?? "null");
+    return p?.key && p?.data?.type === "medical" ? p : null;
+  } catch {
+    return null;
+  }
+}
 export function Dashboard() {
-  const [selectedType, setSelectedType] = useState<IncidentType>('medical')
-  const [submitting, setSubmitting] = useState(false)
-  const api = useApi()
-  const navigate = useNavigate()
-  const { location, loading: gpsLoading, error: gpsError, getCurrentPosition } = useGeolocation()
-  const deviceId = useDeviceId()
-  const { impactHeavy, notificationSuccess } = useHaptics()
-
-  const handleSOS = async () => {
-    setSubmitting(true)
-    await impactHeavy()
-
-    // A missing fix must never swallow an SOS. The dispatcher can work a
-    // located-later incident; they cannot work one that was never filed.
-    const loc = location ?? (await getCurrentPosition())
-
-    if (!deviceId) {
-      setSubmitting(false)
-      return
-    }
-
+  const api = useApi(),
+    navigate = useNavigate(),
+    deviceId = useDeviceId();
+  const {
+    location,
+    loading,
+    error: gpsError,
+    getCurrentPosition,
+  } = useGeolocation();
+  const { impactHeavy, notificationSuccess } = useHaptics();
+  const pending = useRef<Pending | null>(readPending());
+  const busy = useRef(false);
+  const [submitting, setSubmitting] = useState(false),
+    [uncertain, setUncertain] = useState(Boolean(pending.current));
+  const [storageWarning, setStorageWarning] = useState(false);
+  async function submit() {
+    if (busy.current || !deviceId) return;
+    busy.current = true;
+    setSubmitting(true);
     try {
-      const idempotencyKey = crypto.randomUUID()
-      const incident = await api.createIncident(
-        {
-          type: selectedType,
-          location: loc ?? null,
+      pending.current ??= {
+        key: crypto.randomUUID(),
+        data: {
+          type: "medical",
+          location: location ?? null,
           deviceId,
           occurredAt: new Date().toISOString(),
         },
-        idempotencyKey
-      )
-      await notificationSuccess()
-      navigate(`/triage/${incident.id}`)
+      };
+      try {
+        sessionStorage.setItem(pendingKey, JSON.stringify(pending.current));
+      } catch {
+        setStorageWarning(true);
+      }
+      void Promise.resolve()
+        .then(() => impactHeavy())
+        .catch(() => {});
+      const incident = await api.createIncident(
+        pending.current.data,
+        pending.current.key,
+      );
+      try {
+        sessionStorage.removeItem(pendingKey);
+        sessionStorage.setItem("stat_active_incident_id", incident.id);
+      } catch {
+        /* acknowledgement is still valid */
+      }
+      pending.current = null;
+      void Promise.resolve()
+        .then(() => notificationSuccess())
+        .catch(() => {});
+      navigate("/triage/" + incident.id);
     } catch {
-      setSubmitting(false)
+      setUncertain(true);
+    } finally {
+      busy.current = false;
+      setSubmitting(false);
     }
   }
-
   return (
-    <div className="flex flex-col items-center px-[var(--spacing-margin-mobile)] py-8 gap-8">
-      <div className="text-center">
-        <h2 className="text-2xl font-extrabold text-on-surface mb-2">Emergency SOS</h2>
-        <p className="text-sm text-on-surface-variant">Select emergency type and press SOS</p>
-      </div>
-
-      <div className="flex gap-4">
-        {emergencyTypes.map((et) => (
-          <button
-            key={et.type}
-            onClick={() => setSelectedType(et.type)}
-            className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors ${
-              selectedType === et.type
-                ? 'border-primary bg-primary-container text-on-primary-container'
-                : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:border-outline'
-            }`}
-          >
-            <span className="material-symbols-outlined text-3xl">{et.icon}</span>
-            <span className="text-xs font-bold uppercase">{et.label}</span>
-          </button>
-        ))}
-      </div>
-
+    <>
+      <section className="intro">
+        <h1>
+          Help starts
+          <br />
+          right here.
+        </h1>
+        <p>
+          Start a medical request.
+          <br />
+          You can add the details after.
+        </p>
+      </section>
+      {uncertain && (
+        <section role="alert" className="status-card warning">
+          <h2>Delivery isn't confirmed.</h2>
+          <p>
+            Don't assume help is on the way. Retry checks the same request, not
+            a new one.
+          </p>
+        </section>
+      )}
       <button
-        onClick={handleSOS}
-        disabled={submitting}
-        className="animate-pulse-ring w-40 h-40 rounded-full bg-primary text-on-primary flex flex-col items-center justify-center gap-2 font-extrabold text-2xl uppercase tracking-wider disabled:opacity-50 disabled:animate-none hover:bg-primary-container transition-colors"
+        className="action-panel"
+        onClick={submit}
+        disabled={submitting || !deviceId}
+        aria-label={uncertain ? "Retry same request" : "Request medical help"}
       >
-        <span className="material-symbols-outlined text-5xl">sos</span>
-        SOS
+        <span className="action-orbit" />
+        <span className="action-top">
+          <span className="eyebrow">Medical SOS</span>
+          <span className="medical-symbol">
+            <Icon name="star" />
+          </span>
+        </span>
+        <span className="action-bottom">
+          <span>
+            <span className="action-title">
+              {submitting ? (
+                "Sending request…"
+              ) : uncertain ? (
+                "Retry same request"
+              ) : (
+                <>
+                  Request
+                  <br />
+                  medical help
+                </>
+              )}
+            </span>
+            <span className="action-helper">
+              {deviceId ? "No account needed" : "Preparing this device…"}
+            </span>
+          </span>
+          <span className="action-arrow">
+            <Icon name="arrow" />
+          </span>
+        </span>
       </button>
-
-      <div className="text-center">
-        {gpsLoading && (
-          <p className="text-sm text-on-surface-variant flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm animate-spin">gps_fixed</span>
-            Acquiring GPS...
-          </p>
-        )}
-        {location && !gpsLoading && (
-          <p className="text-sm text-secondary flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm">location_on</span>
-            {location.lat.toFixed(4)}, {location.lng.toFixed(4)}
-          </p>
-        )}
-        {gpsError && (
-          <p className="text-sm text-error">{gpsError}</p>
-        )}
+      {storageWarning && (
+        <p role="status">
+          This browser cannot preserve the pending request after closing. Keep
+          this page open.
+        </p>
+      )}
+      <details className="location">
+        <summary>
+          <Icon name="pin" />
+          <span className="summary-text">
+            <strong>
+              {location ? "Location available" : "Location not shared"}
+            </strong>
+            <small>Optional. Never required to send.</small>
+          </span>
+        </summary>
+        <div className="details-body">
+          <button
+            className="secondary-action"
+            disabled={loading}
+            onClick={() => void getCurrentPosition()}
+          >
+            {loading ? "Finding location…" : "Share location"}
+          </button>
+          {gpsError && (
+            <p role="status">
+              Location unavailable. You can still request help.
+            </p>
+          )}
+        </div>
+      </details>
+      <div className="section-label">
+        <span className="eyebrow">A little preparation</span>
       </div>
-
-      <ActionButton
-        onClick={getCurrentPosition}
-        variant="secondary"
-        icon="my_location"
-        disabled={gpsLoading}
-      >
-        Get Location
-      </ActionButton>
-    </div>
-  )
+      <Link className="shortcut" to="/profile">
+        <span className="shortcut-icon">
+          <Icon name="id" />
+        </span>
+        <span className="shortcut-copy">
+          <strong>Your Medical ID</strong>
+          <small>Health details &amp; people to contact</small>
+        </span>
+        <Icon name="chevron" />
+      </Link>
+    </>
+  );
 }

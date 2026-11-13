@@ -2,6 +2,13 @@
 
 One line per decision. Newest on top. Rationale terse.
 
+## 2026-11-13 (Vercel Services configuration)
+- One project at repository root: Vite mobile service (apps/mobile), Fastify backend (apps/api). Backend is not the obsolete backend/ directory.
+- Public /api/* goes to backend; remaining requests go to frontend with SPA fallback. Hosted API adapts the prefix without changing standalone routes.
+- Hosted bootstrap refuses requests without configured database; no silent ephemeral emergency storage. Default frontend demo remains synthetic until VITE_API_URL=/api is explicitly configured.
+- Runtime/toolchain: Node 22.x and pnpm 10.20.0, aligned with CI's major versions.
+- Configuration only. No deployment, hosted-data changes, auth hardening or cross-instance realtime guarantee. Protected staging and existing release gates remain required.
+
 ## 2026-11-01 (realistic synthetic demo users)
 - User requests populated demo users for every group: citizen, responder, dispatcher, hospital_staff and admin.
 - Synthetic personas have coherent medical/staff profiles and a shared linked response dataset. Fictional labels/emails/contact identifiers only; no real accounts or hosted writes.

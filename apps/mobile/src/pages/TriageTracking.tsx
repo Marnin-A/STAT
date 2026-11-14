@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useApi } from "../api/ApiProvider";
 import type { Incident, Triage, TriageAnswer } from "@stat/shared";
+import { useDemo } from "../demo/DemoProvider";
+import { DemoCase } from "../demo/DemoCase";
 export function TriageTracking() {
-  const { id } = useParams<{ id: string }>(),
+  const demo = useDemo();
+  const { id } = useParams<{ id: string; }>(),
     api = useApi();
   const [incident, setIncident] = useState<Incident | null>(null),
     [error, setError] = useState(false),
@@ -12,10 +15,11 @@ export function TriageTracking() {
     [feedback, setFeedback] = useState(""),
     [sending, setSending] = useState(false);
   const [revision, setRevision] = useState(0);
+  useEffect(() => { setIncident(null); setTriage(null); setAnswers([]); }, [api, id]);
   useEffect(() => {
     let active = true;
+    if (demo?.api.busy) return;
     setError(false);
-    setIncident(null);
     if (id) {
       api
         .getIncident(id)
@@ -28,14 +32,14 @@ export function TriageTracking() {
       api
         .getTriage(id)
         .then((t) => {
-          if (active) setTriage(t);
+          if (active) { setTriage(t); setAnswers(previous => previous.length ? previous : t.answers); }
         })
-        .catch(() => {});
+        .catch(() => { });
     }
     return () => {
       active = false;
     };
-  }, [api, id, revision]);
+  }, [api, id, revision, demo?.revision]);
   if (error)
     return (
       <section role="alert" className="status-card warning">
@@ -97,7 +101,9 @@ export function TriageTracking() {
       >
         Refresh status
       </button>
-      <details className="profile-tools">
+      {demo && <Link className="shortcut" to="/demo">Continue demo workflow · switch accounts above</Link>}
+      {demo && <DemoCase incident={incident} />}
+      {!ended && (!demo || (id && demo.api.canSubmitTriage(id))) && <details className="profile-tools">
         <summary>Optional response questions</summary>
         {triage?.questions.length ? (
           <form
@@ -153,7 +159,7 @@ export function TriageTracking() {
               ))}
             <button
               className="secondary-action"
-              disabled={sending || answers.length === 0}
+              disabled={sending || demo?.api.busy || answers.length === 0}
             >
               Send answers
             </button>
@@ -165,7 +171,7 @@ export function TriageTracking() {
             answers.
           </p>
         )}
-      </details>
+      </details>}
       <Link className="shortcut" to="/profile">
         Your Medical ID &amp; contacts
       </Link>

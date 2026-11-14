@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>STAT / Dispatch Console</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-ink": "#52525B",
+            "surface-white": "#FFFFFF",
+            "on-secondary": "#ffffff",
+            "teal-wash": "#EAF3F1",
+            "primary": "#044f47",
+            "on-error": "#ffffff",
+            "muted-teal": "#28675F",
+            "emergency-wash": "#FCECEF",
+            "tertiary-container": "#864f3c",
+            "on-tertiary-fixed": "#350f03",
+            "on-secondary-fixed": "#1a1b23",
+            "tertiary-fixed-dim": "#feb59d",
+            "background": "#f8faf8",
+            "on-primary-fixed-variant": "#065048",
+            "on-tertiary-fixed-variant": "#6b3928",
+            "surface-container-highest": "#e1e3e1",
+            "tertiary": "#6a3827",
+            "on-background": "#191c1b",
+            "inverse-primary": "#94d2c8",
+            "charcoal-ink": "#18181B",
+            "surface-container-high": "#e7e9e7",
+            "on-error-container": "#93000a",
+            "secondary-fixed-dim": "#c7c5d0",
+            "on-tertiary-container": "#ffcbbb",
+            "outline-variant": "#bfc9c6",
+            "surface": "#f8faf8",
+            "on-surface": "#191c1b",
+            "on-surface-variant": "#3f4947",
+            "on-secondary-container": "#62626b",
+            "warning-wash": "#FEF9C3",
+            "emergency-red": "#A61D35",
+            "outline": "#6f7977",
+            "secondary": "#5e5e67",
+            "surface-tint": "#296860",
+            "error-container": "#ffdad6",
+            "primary-container": "#28675f",
+            "surface-bright": "#f8faf8",
+            "surface-container": "#eceeec",
+            "whisper-border": "#E4E4E7",
+            "tertiary-fixed": "#ffdbcf",
+            "primary-fixed-dim": "#94d2c8",
+            "primary-fixed": "#b0efe4",
+            "inverse-surface": "#2e3130",
+            "on-primary": "#ffffff",
+            "surface-variant": "#e1e3e1",
+            "secondary-container": "#e0dee9",
+            "warning-ink": "#854D0E",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed": "#00201c",
+            "on-primary-container": "#a4e3d8",
+            "surface-container-low": "#f2f4f2",
+            "canvas-neutral": "#FAFAFA",
+            "secondary-fixed": "#e3e1ec",
+            "error": "#ba1a1a",
+            "inverse-on-surface": "#eff1ef",
+            "surface-dim": "#d8dad9",
+            "on-tertiary": "#ffffff",
+            "on-secondary-fixed-variant": "#46464f",
+            "quiet-zinc": "#F4F4F5"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "space-xs": "0.25rem",
+            "margin": "1.5rem",
+            "space-sm": "0.5rem",
+            "gutter": "1rem",
+            "space-xl": "2rem",
+            "space-md": "1rem"
+          },
+          "fontFamily": {
+            "body-lg": ["Geist Sans", "sans-serif"],
+            "numeric-data": ["Geist Mono", "monospace"],
+            "headline-sm": ["Geist Sans", "sans-serif"],
+            "headline-md": ["Geist Sans", "sans-serif"],
+            "headline-lg": ["Geist Sans", "sans-serif"],
+            "body-sm": ["Geist Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "numeric-data": ["28px", { "lineHeight": "36px", "fontWeight": "500" }],
+            "headline-sm": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="bg-canvas-neutral text-charcoal-ink font-body-lg min-h-screen flex flex-col antialiased selection:bg-teal-wash selection:text-primary">
+<!-- Desktop Top App Bar Header -->
+<header class="w-full bg-surface-white border-b border-whisper-border px-6 py-3 shrink-0 sticky top-0 z-40">
+<div class="max-w-[1440px] mx-auto flex items-center justify-between gap-4">
+<!-- Brand & Synthetic Disclaimer -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="local_hospital">local_hospital</span>
+<div class="flex items-baseline gap-1.5">
+<span class="font-headline-md text-headline-md font-bold tracking-tight text-primary">STAT</span>
+<span class="text-secondary-ink font-body-lg">· Dispatcher</span>
+</div>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-quiet-zinc text-secondary-ink border border-whisper-border">
+          Demo
+        </span>
+<div class="h-4 w-px bg-whisper-border"></div>
+<div class="flex items-center gap-1.5 text-secondary-ink text-body-sm font-body-sm">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="shield">shield</span>
+<span>Synthetic cases · No real services contacted</span>
+</div>
+</div>
+<!-- Console State / Operator Status -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-quiet-zinc border border-whisper-border rounded-lg px-3 py-1.5 text-body-sm font-body-sm">
+<span class="h-2 w-2 rounded-full bg-muted-teal"></span>
+<span class="text-charcoal-ink font-medium">Dispatch Console · Desk 03</span>
+</div>
+<div class="text-secondary-ink text-body-sm font-numeric-data">
+          14:03 WAT
+        </div>
+</div>
+</div>
+</header>
+<!-- Desktop Workspace Shell -->
+<div class="flex flex-1 max-w-[1440px] w-full mx-auto overflow-hidden">
+<!-- Left Navigation Sidebar -->
+<aside class="w-56 shrink-0 bg-surface-white border-r border-whisper-border flex flex-col justify-between py-5 px-3">
+<nav aria-label="Dispatcher Workspace Navigation" class="space-y-1.5">
+<!-- Active: Intake -->
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-teal-wash text-primary font-medium transition-colors" href="#intake">
+<span class="material-symbols-outlined text-xl text-primary" data-icon="emergency" style="font-variation-settings: 'FILL' 1;">emergency</span>
+<span class="text-body-sm font-body-sm font-semibold">Intake</span>
+</a>
+<!-- Inactive: Active cases -->
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-secondary-ink hover:bg-quiet-zinc hover:text-charcoal-ink transition-colors" href="#cases">
+<span class="material-symbols-outlined text-xl text-secondary" data-icon="history">history</span>
+<span class="text-body-sm font-body-sm">Active cases</span>
+</a>
+<!-- Inactive: Units -->
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-secondary-ink hover:bg-quiet-zinc hover:text-charcoal-ink transition-colors" href="#units">
+<span class="material-symbols-outlined text-xl text-secondary" data-icon="directions_car">directions_car</span>
+<span class="text-body-sm font-body-sm">Units</span>
+</a>
+<!-- Inactive: Account -->
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-secondary-ink hover:bg-quiet-zinc hover:text-charcoal-ink transition-colors" href="#account">
+<span class="material-symbols-outlined text-xl text-secondary" data-icon="person">person</span>
+<span class="text-body-sm font-body-sm">Account</span>
+</a>
+</nav>
+<!-- Sidebar Footer Status Indicator -->
+</aside>
+<!-- Main Two-Column Layout -->
+<main class="flex flex-1 overflow-hidden">
+<!-- Column 1: Intake Queue (~380px) -->
+<section class="w-[380px] shrink-0 border-r border-whisper-border bg-surface-white flex flex-col overflow-y-auto">
+<!-- Queue Header -->
+<div class="p-5 border-b border-whisper-border sticky top-0 bg-surface-white/95 backdrop-blur-sm z-10">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-charcoal-ink">Incoming queue</h2>
+<span class="px-2 py-0.5 text-xs font-medium rounded-full bg-quiet-zinc text-secondary-ink border border-whisper-border">
+              3 synthetic
+            </span>
+</div>
+<p class="text-body-sm text-secondary-ink mt-1">Review priority order. Manual evaluation required.</p>
+</div>
+<!-- Queue Cards List -->
+<div class="p-4 space-y-3">
+<!-- Card 1: Selected Case (DEMO-1042) -->
+<article class="p-4 rounded-2xl bg-teal-wash/30 border-2 border-muted-teal cursor-pointer transition-all shadow-sm relative">
+<div class="flex items-start justify-between gap-2">
+<div>
+<span class="font-numeric-data text-xs font-semibold text-primary tracking-wide">DEMO-1042</span>
+<h3 class="font-headline-sm text-base text-charcoal-ink mt-0.5">Medical SOS</h3>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-warning-wash text-warning-ink border border-amber-200">
+                Awaiting approval
+              </span>
+</div>
+<div class="mt-3 pt-3 border-t border-teal-wash flex items-center justify-between text-body-sm text-secondary-ink">
+<span class="flex items-center gap-1 font-numeric-data text-xs">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+                14:02 WAT
+              </span>
+<span class="text-xs font-medium text-charcoal-ink bg-surface-white px-2 py-0.5 rounded border border-whisper-border">
+                Citizen Web SOS
+              </span>
+</div>
+</article>
+<!-- Card 2: Synthetic Case (DEMO-1043) -->
+<article class="p-4 rounded-2xl bg-surface-white border border-whisper-border hover:border-slate-300 hover:bg-quiet-zinc/50 cursor-pointer transition-all">
+<div class="flex items-start justify-between gap-2">
+<div>
+<span class="font-numeric-data text-xs font-medium text-secondary-ink">DEMO-1043</span>
+<h3 class="font-headline-sm text-base text-charcoal-ink mt-0.5">Medical assistance inquiry</h3>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-quiet-zinc text-secondary-ink">
+                Queued
+              </span>
+</div>
+<div class="mt-3 pt-3 border-t border-whisper-border flex items-center justify-between text-body-sm text-secondary-ink">
+<span class="flex items-center gap-1 font-numeric-data text-xs">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+                14:05 WAT
+              </span>
+<span class="text-xs text-secondary-ink">
+                Web Intake
+              </span>
+</div>
+</article>
+<!-- Card 3: Synthetic Case (DEMO-1041) -->
+<article class="p-4 rounded-2xl bg-surface-white border border-whisper-border hover:border-slate-300 hover:bg-quiet-zinc/50 cursor-pointer transition-all">
+<div class="flex items-start justify-between gap-2">
+<div>
+<span class="font-numeric-data text-xs font-medium text-secondary-ink">DEMO-1041</span>
+<h3 class="font-headline-sm text-base text-charcoal-ink mt-0.5">Check-in request</h3>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-quiet-zinc text-secondary-ink">
+                Pending triage
+              </span>
+</div>
+<div class="mt-3 pt-3 border-t border-whisper-border flex items-center justify-between text-body-sm text-secondary-ink">
+<span class="flex items-center gap-1 font-numeric-data text-xs">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+                13:58 WAT
+              </span>
+<span class="text-xs text-secondary-ink">
+                Direct Check-in
+              </span>
+</div>
+</article>
+</div>
+<div class="mt-auto p-4 border-t border-whisper-border bg-quiet-zinc/40 text-center"><p class="text-xs text-secondary-ink">Demo only · Synthetic incident fixture · No real services contacted</p></div>
+</section>
+<!-- Column 2: Selected Case & Action Workspace -->
+<section class="flex-1 overflow-y-auto bg-canvas-neutral p-6 space-y-6">
+<!-- Case Header Bar -->
+<div class="bg-surface-white border border-whisper-border rounded-2xl p-5 shadow-sm">
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-numeric-data text-xs font-bold text-muted-teal uppercase tracking-wider">Active Incident</span>
+<span class="text-whisper-border">·</span>
+<span class="font-numeric-data text-sm text-secondary-ink">ID: DEMO-1042</span>
+</div>
+<h1 class="font-headline-lg text-headline-md lg:text-headline-lg text-charcoal-ink">Incident DEMO-1042 · Medical SOS</h1>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-body-sm font-body-sm font-medium bg-warning-wash text-warning-ink border border-amber-200">
+<span class="h-2 w-2 rounded-full bg-warning-ink"></span>
+              Awaiting dispatcher approval
+            </span>
+</div>
+<!-- Primary Action Control Zone -->
+<div class="mt-6 pt-5 border-t border-whisper-border flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4"><div class="flex items-center"><button class="min-h-[52px] px-8 rounded-xl bg-muted-teal hover:bg-primary text-surface-white font-headline-sm text-base font-semibold shadow-sm focus:outline-none focus:ring-4 focus:ring-primary-fixed transition-all flex items-center justify-center gap-2" type="button"><span class="material-symbols-outlined text-xl" data-icon="check_circle">check_circle</span>Approve dispatch</button></div></div>
+</div>
+<!-- Warning Review Flag Card -->
+<div class="p-4 rounded-2xl bg-warning-wash border border-amber-200 flex items-start gap-3"><span class="material-symbols-outlined text-warning-ink text-xl shrink-0 mt-0.5" data-icon="warning">warning</span><div class="flex flex-wrap items-baseline gap-2"><span class="font-headline-sm text-sm font-semibold text-warning-ink">Callback unverified · Review flag</span><span class="text-xs text-secondary-ink">— Not proof of fraud; review without lowering medical priority.</span></div></div>
+<!-- Two-Col Grid for Proposed Unit & Intake Details -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Proposed Unit Card -->
+<div class="bg-surface-white border border-whisper-border rounded-2xl p-5 shadow-sm space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-whisper-border">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-muted-teal text-xl" data-icon="ambulance">ambulance</span>
+<h3 class="font-headline-sm text-base text-charcoal-ink">Proposed Unit</h3>
+</div>
+<span class="text-xs font-medium text-muted-teal bg-teal-wash px-2 py-1 rounded-md">Available</span>
+</div>
+<div class="space-y-3">
+<div>
+<span class="text-xs text-secondary-ink font-medium">Assigned Unit Name</span>
+<p class="text-body-lg font-headline-sm text-charcoal-ink mt-0.5">Demo ambulance 07</p>
+</div>
+<div>
+<span class="text-xs text-secondary-ink font-medium">Eligibility Rationale</span>
+<p class="text-body-sm font-body-sm text-charcoal-ink mt-0.5">Medical unit · Available</p>
+</div>
+</div>
+</div>
+<!-- Intake Details Card -->
+<div class="bg-surface-white border border-whisper-border rounded-2xl p-5 shadow-sm space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-whisper-border">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-muted-teal text-xl" data-icon="assignment">assignment</span>
+<h3 class="font-headline-sm text-base text-charcoal-ink">Intake Details</h3>
+</div>
+<span class="text-xs font-numeric-data text-secondary-ink">LOG #1042-A</span>
+</div>
+<div class="divide-y divide-whisper-border text-body-sm"><div class="py-2.5 flex justify-between gap-4"><span class="text-secondary-ink">Request received:</span><span class="font-numeric-data text-charcoal-ink text-right font-medium">14:02 WAT via Web SOS</span></div><div class="py-2.5 flex justify-between gap-4"><span class="text-secondary-ink">Citizen location:</span><span class="text-secondary-ink text-right italic">Location not provided</span></div><div class="py-2.5 flex justify-between gap-4"><span class="text-secondary-ink">Callback number:</span><span class="text-secondary-ink text-right italic">Callback not provided</span></div><div class="py-2.5 flex justify-between gap-4"><span class="text-secondary-ink">Medical ID:</span><span class="text-secondary-ink text-right italic">Not shared (Consent pending)</span></div></div>
+</div>
+</div>
+<!-- Collapsible AI-assisted Summary Container -->
+<details class="bg-surface-white border border-whisper-border rounded-2xl p-5 shadow-sm group"><summary class="flex items-center justify-between cursor-pointer list-none select-none"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-muted-teal text-xl" data-icon="psychology">psychology</span><h3 class="font-headline-sm text-sm text-charcoal-ink font-semibold">AI-assisted summary <span class="text-xs font-normal text-secondary-ink">(Illustrative only · Not connected to live service)</span></h3></div><span class="material-symbols-outlined text-secondary group-open:rotate-180 transition-transform duration-200" data-icon="expand_more">expand_more</span></summary><div class="mt-3 pt-3 border-t border-whisper-border text-body-sm text-secondary-ink"><p>Medical assistance requested; no further structured symptoms provided.</p></div></details>
+<!-- Incident Timeline & Structured Dispatcher Notes -->
+<div class="bg-surface-white border border-whisper-border rounded-2xl p-5 shadow-sm space-y-5"><div class="flex items-center justify-between pb-3 border-b border-whisper-border"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-muted-teal text-xl" data-icon="event_note">event_note</span><h3 class="font-headline-sm text-base text-charcoal-ink">Incident Timeline &amp; Records</h3></div><span class="text-xs text-secondary-ink">Audit sequence logs</span></div><div class="space-y-2 font-body-sm"><div class="flex items-center gap-3 p-2.5 rounded-xl bg-quiet-zinc/60 border border-whisper-border"><span class="font-numeric-data text-xs text-secondary-ink font-semibold whitespace-nowrap">14:02:18</span><div class="text-charcoal-ink text-sm">Intake payload logged</div></div><div class="flex items-center gap-3 p-2.5 rounded-xl bg-quiet-zinc/60 border border-whisper-border"><span class="font-numeric-data text-xs text-secondary-ink font-semibold whitespace-nowrap">14:02:22</span><div class="text-charcoal-ink text-sm">Queued for dispatcher review</div></div></div><div class="pt-3 border-t border-whisper-border space-y-2"><div class="flex items-center justify-between"><label class="block text-xs font-medium text-secondary-ink" for="dispatcher-note">Dispatcher record note (timestamped)</label></div><div class="flex gap-3"><input class="flex-1 bg-surface-white border border-whisper-border rounded-xl px-4 py-2 text-body-sm focus:border-muted-teal focus:ring-1 focus:ring-muted-teal text-charcoal-ink placeholder:text-secondary-ink" id="dispatcher-note" placeholder="Log operational note or triage status..." type="text"/><button class="px-5 py-2 rounded-xl bg-quiet-zinc hover:bg-slate-200 border border-whisper-border text-charcoal-ink text-body-sm font-semibold transition-colors shrink-0" type="button">Save note</button></div></div></div>
+</section>
+</main>
+</div>
+</body></html>

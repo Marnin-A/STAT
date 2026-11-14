@@ -1,3 +1,5 @@
 export * from './types'
 export * from './api'
 export { MockApiClient } from './mock'
+export { HttpApiClient, ApiError, NetworkError } from './http'
+export type { HttpApiClientOptions } from './http'

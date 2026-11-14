@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: node .github/tests/ci-toolchain.test.cjs
+      - run: pnpm typecheck
+      # In-memory suites only. The Pg conformance suite (M3) needs secrets and
+      # runs separately, so forks and secret-less runs still get a full gate.
+      - run: pnpm test:api
+      - run: pnpm test:mobile
+      - run: pnpm build
+
+  # Postgres port conformance. Needs a database secret, so it cannot run on
+  # forks — the in-memory gate above always runs and covers the same
+  # assertions against the InMemory adapters.
+  conformance:
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Port conformance against Postgres
+        env:
+          TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+        run: |
+          if [ -z "$TEST_DATABASE_URL" ]; then
+            echo "TEST_DATABASE_URL not set — skipping Postgres conformance"
+            exit 0
+          fi
+          pnpm --filter @stat/api exec vitest run src/db/conformance.test.ts

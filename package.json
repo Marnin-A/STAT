@@ -1,15 +1,20 @@
 {
-  "name": "stat-mobile",
+  "name": "stat",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.20.0",
   "scripts": {
     "dev": "pnpm --filter @stat/mobile dev",
-    "build": "pnpm --filter @stat/mobile build",
-    "test": "pnpm --filter @stat/mobile test",
+    "dev:api": "pnpm --filter @stat/api dev",
+    "build": "pnpm --filter @stat/api build && pnpm --filter @stat/mobile build",
+    "test": "pnpm --filter @stat/api test && pnpm --filter @stat/mobile test:run",
+    "test:api": "pnpm --filter @stat/api test",
+    "test:mobile": "pnpm --filter @stat/mobile test:run",
+    "typecheck": "pnpm --filter @stat/api typecheck",
     "cap:open": "pnpm --filter @stat/mobile cap:open"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": "22.x",
     "pnpm": ">=8.0.0"
   }
 }

@@ -1,13 +1,16 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { AppLayout } from './components/layout/AppLayout'
-import { Dashboard } from './pages/Dashboard'
-import { TriageList } from './pages/TriageList'
-import { TriageTracking } from './pages/TriageTracking'
-import { MedicalIncident } from './pages/MedicalIncident'
-import { SecurityTactical } from './pages/SecurityTactical'
-import { FireHazard } from './pages/FireHazard'
-import { DispatchMap } from './pages/DispatchMap'
-import { HospitalPreArrival } from './pages/HospitalPreArrival'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AppLayout } from "./components/layout/AppLayout";
+import { Dashboard } from "./pages/Dashboard";
+import { TriageList } from "./pages/TriageList";
+import { TriageTracking } from "./pages/TriageTracking";
+import { MedicalIncident } from "./pages/MedicalIncident";
+import { SecurityTactical } from "./pages/SecurityTactical";
+import { FireHazard } from "./pages/FireHazard";
+import { DispatchMap } from "./pages/DispatchMap";
+import { HospitalPreArrival } from "./pages/HospitalPreArrival";
+import { Profile } from "./pages/Profile";
+import { Activity } from "./pages/Activity";
+import { DemoWorkspace } from "./demo/DemoWorkspace";
 
 function App() {
   return (
@@ -15,6 +18,9 @@ function App() {
       <AppLayout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/demo" element={<DemoWorkspace />} />
+          <Route path="/activity" element={<Activity />} />
           <Route path="/triage" element={<TriageList />} />
           <Route path="/triage/:id" element={<TriageTracking />} />
           <Route path="/triage/medical/:id" element={<MedicalIncident />} />
@@ -25,7 +31,7 @@ function App() {
         </Routes>
       </AppLayout>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;

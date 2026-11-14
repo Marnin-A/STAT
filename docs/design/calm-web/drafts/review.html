@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f6f3ed"><title>STAT · Quiet Confidence · Design 02</title><link rel="stylesheet" href="./quiet-theme.css"><style>
+.review { background: var(--canvas); }
+.review-wrap { max-width: 1400px; margin: auto; padding: 32px 40px 40px; }
+.review-header { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.review-header .wordmark { font-size: 2rem; }
+.edition { color: var(--muted); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; }
+.review-title { display: grid; grid-template-columns: 1.5fr 1fr; align-items: end; gap: 32px; padding: 36px 0 28px; }
+.review-title h1 { font-size: clamp(2.25rem, 4vw, 3.5rem); font-weight: 500; }
+.review-title p { max-width: 43ch; font-size: .9375rem; }
+.review-title .eyebrow { margin-bottom: 12px; color: var(--lilac-ink); }
+.palette { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+.swatch { display: inline-flex; align-items: center; gap: 8px; font-size: .75rem; color: var(--muted); padding-right: 12px; }
+.swatch i { display: block; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--line); background: var(--swatch); }
+.preview-warning { margin-left: auto; font-size: .75rem; color: var(--muted); }
+.studies { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 32px; align-items: start; }
+.study-label { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+.study-label h2 { font-size: .875rem; letter-spacing: -.02em; }
+.study-label span { color: var(--muted); font-size: .75rem; font-weight: 400; margin-right: 8px; }
+.study-label a { display: flex; align-items: center; min-height: 48px; font-size: .75rem; color: var(--muted); gap: 5px; }
+.study-label svg { width: 14px; height: 14px; }
+.screen { border: 1px solid #d3cbd8; border-radius: 34px; padding: 7px; background: #eee8ef; box-shadow: 0 12px 30px #29243808; }
+iframe { display: block; width: 100%; height: 870px; border: 0; border-radius: 27px; background: var(--canvas); }
+.review-footer { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; padding-top: 28px; margin-top: 36px; border-top: 1px solid var(--line); font-size: .8125rem; }
+.review-footer p { max-width: 65ch; }
+.review-footer a { display: inline-flex; align-items: center; min-height: 48px; }
+@media(min-width:1500px) { iframe { height: 900px; } }
+@media(max-width:1050px) {
+  .review-wrap { padding: 24px; }
+  .studies { gap: 20px; grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .review-title { grid-template-columns: 1fr; gap: 16px; }
+  .preview-warning { margin-left: 0; }
+}
+@media(max-width:620px) {
+  .review-wrap { padding: 20px 12px; }
+  .review-header { padding-inline: 8px; }
+  .edition { max-width: 16ch; text-align: right; }
+  .review-title { padding-inline: 8px; padding-top: 28px; }
+  .review-title h1 { font-size: 2.25rem; }
+  .palette { padding-inline: 8px; row-gap: 12px; }
+  .studies { grid-template-columns: minmax(0,1fr); gap: 32px; }
+  .study-label { padding-inline: 8px; }
+  .screen { border-radius: 28px; padding: 4px; }
+  iframe { height: 950px; border-radius: 23px; }
+  .review-footer { flex-direction: column; gap: 8px; padding-inline: 8px; }
+}
+</style></head><body class="review"><a class="skip" href="#studies">Skip to designs</a><div class="review-wrap"><header class="review-header"><a href="./quiet-home.html" class="wordmark" aria-label="STAT mobile preview"><svg viewBox="0 0 24 24" class="brand-icon" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/></svg><span>stat</span></a><span class="edition">Product design / study 02</span></header><main><section class="review-title"><div><span class="eyebrow">Quiet confidence</span><h1>Care, with a little<br>more breathing room.</h1></div><p>A softer palette. One unmistakable next step.<br>Medical help up front; everything else, thoughtfully tucked away.</p></section><div class="palette" aria-label="Theme palette"><span class="swatch"><i style="--swatch:var(--primary)"></i>Midnight plum</span><span class="swatch"><i style="--swatch:var(--lilac)"></i>Soft lilac</span><span class="swatch"><i style="--swatch:var(--canvas)"></i>Warm ivory</span><span class="preview-warning">Visual study only · Synthetic data · Nothing is sent</span></div><div class="studies" id="studies">
+<section><div class="study-label"><h2><span>01</span>Home</h2><a href="./quiet-home.html">Open screen <svg viewBox="0 0 24 24" class="" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></div><div class="screen"><iframe src="./quiet-home.html" title="Home — interactive visual study" sandbox="allow-same-origin"></iframe></div></section>
+<section><div class="study-label"><h2><span>02</span>Request received</h2><a href="./quiet-request.html">Open screen <svg viewBox="0 0 24 24" class="" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></div><div class="screen"><iframe src="./quiet-request.html" title="Request received — interactive visual study" sandbox="allow-same-origin"></iframe></div></section>
+<section><div class="study-label"><h2><span>03</span>Medical ID & contacts</h2><a href="./quiet-profile.html">Open screen <svg viewBox="0 0 24 24" class="" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></div><div class="screen"><iframe src="./quiet-profile.html" title="Medical ID & contacts — interactive visual study" sandbox="allow-same-origin"></iframe></div></section>
+</div></main><footer class="review-footer"><p>Open a screen to review it at your device size. Links explore static examples; they don't send SOS, save information or contact anyone. This is a local visual direction, not a new Stitch export.</p><a href="./previous-gallery.html">Previous studies (superseded)</a></footer></div></body></html>

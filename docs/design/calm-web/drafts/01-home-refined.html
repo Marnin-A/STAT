@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>STAT · Home</title>
+<!-- Google Fonts: Geist & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-fixed-dim": "#feb59d",
+            "secondary-fixed": "#ffdada",
+            "surface-variant": "#e4e1e6",
+            "surface-container-lowest": "#ffffff",
+            "background": "#fbf8fc",
+            "on-background": "#1b1b1e",
+            "inverse-surface": "#303033",
+            "primary": "#044f47",
+            "tertiary": "#6a3827",
+            "surface-container-highest": "#e4e1e6",
+            "on-secondary-container": "#640017",
+            "error-container": "#ffdad6",
+            "on-primary-fixed": "#00201c",
+            "tertiary-container": "#864f3c",
+            "error": "#ba1a1a",
+            "on-secondary-fixed": "#40000c",
+            "surface-container-low": "#f6f2f7",
+            "secondary-container": "#fd5f70",
+            "on-error-container": "#93000a",
+            "secondary": "#b2273d",
+            "on-tertiary": "#ffffff",
+            "outline-variant": "#bfc9c6",
+            "surface-tint": "#296860",
+            "primary-fixed": "#b0efe4",
+            "surface-bright": "#fbf8fc",
+            "outline": "#6f7977",
+            "surface-dim": "#dcd9dd",
+            "on-secondary": "#ffffff",
+            "on-error": "#ffffff",
+            "on-surface": "#1b1b1e",
+            "inverse-primary": "#94d2c8",
+            "surface": "#fbf8fc",
+            "on-primary-fixed-variant": "#065048",
+            "on-tertiary-fixed": "#350f03",
+            "tertiary-fixed": "#ffdbcf",
+            "surface-container": "#f0edf1",
+            "inverse-on-surface": "#f3f0f4",
+            "on-tertiary-container": "#ffcbbb",
+            "primary-container": "#28675f",
+            "on-tertiary-fixed-variant": "#6b3928",
+            "on-secondary-fixed-variant": "#900628",
+            "surface-container-high": "#eae7eb",
+            "on-primary-container": "#a4e3d8",
+            "on-surface-variant": "#3f4947",
+            "on-primary": "#ffffff",
+            "secondary-fixed-dim": "#ffb3b5",
+            "primary-fixed-dim": "#94d2c8"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "0.75rem",
+            "margin-desktop": "3rem",
+            "gutter-tablet": "1.5rem",
+            "gutter": "1.25rem",
+            "space-lg": "1rem",
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem",
+            "margin": "1.25rem",
+            "space-xl": "1.5rem",
+            "margin-tablet": "2rem",
+            "gutter-desktop": "2rem"
+          },
+          "fontFamily": {
+            "label-caps": ["Geist", "sans-serif"],
+            "body-lg": ["Geist", "sans-serif"],
+            "headline-md": ["Geist", "sans-serif"],
+            "body-md": ["Geist", "sans-serif"],
+            "headline-lg": ["Geist", "sans-serif"],
+            "title-sm": ["Geist", "sans-serif"],
+            "metadata-semibold": ["Geist", "sans-serif"],
+            "metadata": ["Geist", "sans-serif"],
+            "display-critical": ["Geist", "sans-serif"]
+          },
+          "fontSize": {
+            "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-md": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-lg": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "title-sm": ["17px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "metadata-semibold": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+            "metadata": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "display-critical": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #FAFAFA;
+      color: #18181B;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      display: inline-block;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+    }
+    .pb-safe {
+      padding-bottom: max(env(safe-area-inset-bottom, 16px), 16px);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#FAFAFA] text-[#18181B] antialiased selection:bg-[#EAF3F1]">
+<!-- Top Viewport App Container (Dedicated Mobile Frame layout: 390px fixed boundary, centered) -->
+<div class="w-full max-w-[390px] mx-auto min-h-screen flex flex-col justify-between relative bg-[#FAFAFA]">
+<!-- 1. Header (Shared Component: TopAppBar with authority tokens) -->
+<header class="bg-surface dark:bg-surface sticky top-0 z-40 w-full shadow-sm dark:shadow-none bg-white/90 backdrop-blur-md">
+<div class="flex justify-between items-center w-full px-5 py-3 max-w-md mx-auto">
+<!-- Brand Wordmark with clinical indicator -->
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-[#EAF3F1] flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]" data-icon="local_hospital">local_hospital</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="text-headline-md font-headline-md font-bold tracking-tight text-primary dark:text-inverse-primary leading-none">STAT</span>
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-primary mb-0.5"></span>
+</div>
+</div>
+<!-- Trailing Action: Demo Pill -->
+<div class="flex items-center">
+<span class="px-2.5 py-0.5 text-label-caps font-label-caps bg-surface-container text-[#52525B] rounded-full border border-surface-variant font-medium">Demo</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-5 pt-5 pb-28 flex flex-col justify-start">
+<!-- 2. Page Title & Prompt Area -->
+<section class="mb-5">
+<h1 class="text-headline-lg font-headline-lg text-[#18181B] tracking-tight">Need medical help?</h1>
+<p class="text-body-lg font-body-lg text-[#52525B] mt-1 leading-normal">Send a request for a dispatcher to review.</p>
+</section>
+<!-- 3. Main Emergency Action Panel (Focal Element) -->
+<section class="bg-white rounded-[22px] p-6 border border-zinc-200/80 shadow-[0_1px_3px_0_rgba(24,24,27,0.04),0_4px_12px_0_rgba(24,24,27,0.03)] flex flex-col items-center">
+<!-- Medical emblem badge in crimson wash -->
+<div class="w-11 h-11 rounded-full bg-[#FCECEF] flex items-center justify-center mb-5 text-[#A61D35]">
+<span class="material-symbols-outlined text-[24px]" data-icon="emergency" data-weight="fill" style="font-variation-settings: 'FILL' 1;">emergency</span>
+</div>
+<!-- Dominant Emergency Action Button (Exact Height 64px) -->
+<button class="w-full h-16 bg-[#A61D35] hover:bg-[#8F182D] active:bg-[#7e1427] text-white text-[17px] font-semibold rounded-2xl flex items-center justify-center gap-3 shadow-sm active:scale-[0.99] transition-all duration-150 focus:outline-none focus:ring-4 focus:ring-[#FCECEF] select-none" id="emergencyBtn" onclick="handleEmergencyRequest()" type="button">
+<span class="material-symbols-outlined text-[24px]" data-icon="local_hospital">local_hospital</span>
+<span>Request medical help</span>
+</button>
+<!-- Frictionless Helper Label -->
+<p class="text-metadata font-metadata text-[#52525B] text-center mt-3.5 leading-relaxed">
+          No account needed. You can add details after sending.
+        </p>
+</section>
+<!-- 4. Location Context Row (Quiet Card) -->
+<section class="mt-4 bg-white rounded-[20px] p-4 border border-zinc-200/80 shadow-[0_1px_2px_rgba(24,24,27,0.02)] flex flex-col gap-3.5"><div class="flex items-start gap-3"><div class="w-10 h-10 rounded-xl bg-[#F4F4F5] flex items-center justify-center text-[#52525B] shrink-0 border border-zinc-200/60"><span class="material-symbols-outlined text-[20px]" data-icon="location_off">location_off</span></div><div class="flex-1 min-w-0"><p class="text-title-sm font-title-sm text-[#18181B] text-[15px] leading-tight font-medium">Location not shared</p><p class="text-metadata font-metadata text-[#52525B] text-[13px] leading-normal mt-0.5">Optional — helps dispatchers find your area</p></div></div><button class="w-full h-11 px-4 text-[14px] font-medium text-[#28675F] bg-[#EAF3F1] hover:bg-[#d8ece9] active:bg-[#cae5e1] rounded-xl flex items-center justify-center transition-colors" onclick="requestLocation(this)" type="button"><span class="material-symbols-outlined text-[18px] mr-1.5" data-icon="my_location">my_location</span>Share location</button></section>
+<!-- 5. Secondary Profile / Medical ID Row -->
+<section class="mt-3 bg-white rounded-2xl p-4 border border-zinc-200/70 shadow-[0_1px_2px_rgba(24,24,27,0.02)] flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform" onclick="navigateToProfile()">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-xl bg-[#F4F4F5] flex items-center justify-center text-[#52525B] shrink-0 border border-zinc-200/60">
+<span class="material-symbols-outlined text-[20px]" data-icon="medical_information">medical_information</span>
+</div>
+<div class="min-w-0">
+<p class="text-title-sm font-title-sm text-[#18181B] text-[15px] leading-tight font-medium">Medical ID &amp; contacts</p>
+<p class="text-metadata font-metadata text-[#52525B] text-[13px] leading-snug mt-0.5">Sign in to save your information</p>
+</div>
+</div>
+<div class="w-8 h-8 flex items-center justify-center text-[#52525B] shrink-0">
+<span class="material-symbols-outlined text-[20px]" data-icon="chevron_right">chevron_right</span>
+</div>
+</section>
+<!-- 6. Demo Safety Disclosure -->
+<div class="text-center py-5">
+<p class="text-metadata font-metadata text-[13px] font-medium text-zinc-500">
+          Demo only · No real services contacted
+        </p>
+</div>
+</main>
+<!-- 7. Fixed Bottom Navigation Bar (Shared Component: BottomNavBar with exact schema match & active lock) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex flex-col items-center max-w-md mx-auto pb-safe bg-surface dark:bg-surface shadow-md dark:shadow-none bg-white/95 backdrop-blur-md">
+<div class="w-full max-w-[390px] px-6 py-2 flex justify-around items-center">
+<!-- Tab 1: Home (ACTIVE - Direct Match) -->
+<a aria-current="page" class="flex flex-col items-center justify-center text-[#28675F] bg-[#EAF3F1] rounded-full px-4 py-1.5 active:scale-[0.96] transition-transform duration-150 min-h-[48px] min-w-[64px]" href="#home"><span class="material-symbols-outlined text-[22px] text-[#28675F]" data-icon="emergency" data-weight="fill" style="font-variation-settings: 'FILL' 1;">emergency</span><span class="text-label-caps font-label-caps text-[11px] font-semibold tracking-wide text-[#28675F]">Home</span></a>
+<!-- Tab 2: Activity (INACTIVE) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-3 py-1 hover:text-primary dark:hover:text-inverse-primary active:scale-[0.96] transition-transform duration-150 min-h-[48px] min-w-[64px]" href="#activity">
+<span class="material-symbols-outlined text-[22px] text-[#52525B]" data-icon="history">history</span>
+<span class="text-label-caps font-label-caps text-[11px] text-[#52525B]">Activity</span>
+</a>
+<!-- Tab 3: Profile (INACTIVE) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-3 py-1 hover:text-primary dark:hover:text-inverse-primary active:scale-[0.96] transition-transform duration-150 min-h-[48px] min-w-[64px]" href="#profile">
+<span class="material-symbols-outlined text-[22px] text-[#52525B]" data-icon="person">person</span>
+<span class="text-label-caps font-label-caps text-[11px] text-[#52525B]">Profile</span>
+</a>
+</div>
+</nav>
+</div>
+<!-- Interactive script for clinical mock response and state feedback -->
+<script>
+    function handleEmergencyRequest() {
+      const btn = document.getElementById('emergencyBtn');
+      const originalHtml = btn.innerHTML;
+      
+      // Tactile button reaction
+      btn.innerHTML = `
+        <span class="material-symbols-outlined animate-spin text-[22px]">progress_activity</span>
+        <span>Contacting Dispatcher...</span>
+      `;
+      btn.classList.add('opacity-90');
+      
+      setTimeout(() => {
+        btn.innerHTML = `
+          <span class="material-symbols-outlined text-[24px]">check_circle</span>
+          <span>Request Sent (Demo)</span>
+        `;
+        btn.classList.remove('bg-[#A61D35]');
+        btn.classList.add('bg-[#28675F]');
+        
+        setTimeout(() => {
+          btn.innerHTML = originalHtml;
+          btn.classList.remove('bg-[#28675F]', 'opacity-90');
+          btn.classList.add('bg-[#A61D35]');
+        }, 3000);
+      }, 900);
+    }
+
+    function requestLocation(el) {
+      el.textContent = "Acquiring...";
+      setTimeout(() => {
+        el.textContent = "Shared";
+        el.classList.remove('text-[#28675F]', 'bg-[#EAF3F1]');
+        el.classList.add('text-zinc-600', 'bg-zinc-200');
+      }, 700);
+    }
+
+    function navigateToProfile() {
+      // Visual feedback for profile card tap
+      console.log("Navigating to Medical ID configuration");
+    }
+  </script>
+</body></html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>STAT Calm Response - Activity</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-fixed": "#350f03",
+            "secondary-container": "#e0dee9",
+            "error-container": "#ffdad6",
+            "primary-container": "#28675f",
+            "on-tertiary": "#ffffff",
+            "on-secondary-fixed-variant": "#46464f",
+            "inverse-on-surface": "#eff1ef",
+            "on-primary-container": "#a4e3d8",
+            "primary-fixed-dim": "#94d2c8",
+            "on-error-container": "#93000a",
+            "tertiary": "#6a3827",
+            "surface-container-low": "#f2f4f2",
+            "surface": "#f8faf8",
+            "emergency-wash": "#FCECEF",
+            "charcoal-ink": "#18181B",
+            "on-surface": "#191c1b",
+            "teal-wash": "#EAF3F1",
+            "primary-fixed": "#b0efe4",
+            "secondary": "#5e5e67",
+            "inverse-surface": "#2e3130",
+            "background": "#f8faf8",
+            "warning-ink": "#854D0E",
+            "on-primary": "#ffffff",
+            "whisper-border": "#E4E4E7",
+            "outline-variant": "#bfc9c6",
+            "surface-container": "#eceeec",
+            "tertiary-fixed-dim": "#feb59d",
+            "on-secondary-fixed": "#1a1b23",
+            "on-background": "#191c1b",
+            "surface-tint": "#296860",
+            "surface-container-high": "#e7e9e7",
+            "tertiary-fixed": "#ffdbcf",
+            "secondary-fixed-dim": "#c7c5d0",
+            "on-secondary-container": "#62626b",
+            "surface-dim": "#d8dad9",
+            "surface-bright": "#f8faf8",
+            "on-tertiary-fixed-variant": "#6b3928",
+            "surface-white": "#FFFFFF",
+            "primary": "#044f47",
+            "on-secondary": "#ffffff",
+            "on-tertiary-container": "#ffcbbb",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed": "#00201c",
+            "canvas-neutral": "#FAFAFA",
+            "on-surface-variant": "#3f4947",
+            "warning-wash": "#FEF9C3",
+            "secondary-fixed": "#e3e1ec",
+            "surface-variant": "#e1e3e1",
+            "error": "#ba1a1a",
+            "inverse-primary": "#94d2c8",
+            "secondary-ink": "#52525B",
+            "outline": "#6f7977",
+            "quiet-zinc": "#F4F4F5",
+            "on-error": "#ffffff",
+            "surface-container-highest": "#e1e3e1",
+            "muted-teal": "#28675F",
+            "emergency-red": "#A61D35",
+            "tertiary-container": "#864f3c",
+            "on-primary-fixed-variant": "#065048"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1.25rem",
+            "3xl": "1.5rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "1rem",
+            "space-lg": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "margin": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Geist", "sans-serif"],
+            "numeric-data": ["Geist Mono", "monospace"],
+            "body-lg": ["Geist", "sans-serif"],
+            "headline-sm": ["Geist", "sans-serif"],
+            "headline-md": ["Geist", "sans-serif"],
+            "body-sm": ["Geist", "sans-serif"]
+          },
+          "fontSize": {
+            "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+            "numeric-data": ["28px", { "lineHeight": "36px", "fontWeight": "500" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-sm": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    body {
+      background-color: #FAFAFA;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-canvas-neutral text-charcoal-ink min-h-[884px] flex flex-col justify-between selection:bg-teal-wash selection:text-primary">
+<!-- Top App Bar (Shared Anchor Component) -->
+<header class="w-full bg-surface-white border-b border-whisper-border sticky top-0 z-40">
+<div class="max-w-md mx-auto px-5 py-3 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="local_hospital">local_hospital</span>
+<span class="font-headline-md text-headline-md font-bold tracking-tight text-primary">STAT</span>
+</div>
+<div class="flex items-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-quiet-zinc text-secondary-ink border border-whisper-border">Demo</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-md mx-auto px-5 pt-6 pb-28 flex-1 flex flex-col gap-6">
+<!-- Header Section -->
+<section class="flex flex-col gap-1">
+<h1 class="text-[26px] leading-[34px] font-semibold text-charcoal-ink font-headline-md tracking-tight">Your activity</h1>
+<p class="font-body-lg text-body-lg text-secondary-ink">Requests from this device.</p>
+</section>
+<!-- Active Incident Section -->
+<section class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold tracking-wider text-secondary-ink uppercase">Active Dispatch Request</span>
+</div>
+<!-- Active Incident Card -->
+<article class="bg-surface-white rounded-2xl border border-whisper-border p-5 flex flex-col gap-4 shadow-sm"><div class="flex flex-col gap-2"><div class="flex items-center"><span class="inline-flex items-center text-[12px] font-numeric-data font-medium text-secondary-ink bg-quiet-zinc px-2 py-0.5 rounded border border-whisper-border">DEMO-1042 · Synthetic fixture</span></div><h2 class="font-headline-sm text-headline-sm text-charcoal-ink font-semibold">Medical help request</h2><div class="inline-flex items-center gap-1.5 text-warning-ink"><span class="material-symbols-outlined text-[18px]" data-icon="schedule">schedule</span><span class="text-sm font-semibold">Awaiting dispatcher review</span></div></div><p class="font-body-sm text-body-sm text-secondary-ink leading-relaxed">Case queued for operator review.</p><div class="pt-2 border-t border-whisper-border"><button class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-muted-teal text-on-primary font-headline-sm text-body-lg font-medium flex items-center justify-center gap-2 active:scale-[0.98] transition-transform duration-150" type="button"><span>View request</span><span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span></button></div></article>
+</section>
+<!-- Past Requests Section -->
+<section class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold tracking-wider text-secondary-ink uppercase">PAST REQUESTS</span>
+<span class="text-xs text-secondary-ink">Local archive</span>
+</div>
+<div class="bg-surface-white rounded-2xl border border-whisper-border p-4 flex flex-col gap-3">
+<div class="flex items-start justify-between gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="check_circle">check_circle</span>
+<span class="font-headline-sm text-[16px] leading-[22px] font-semibold text-charcoal-ink">General medical dispatch</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary-ink pl-7">
+              14 Oct 2026 · Closed · Demo fixture
+            </p>
+</div>
+<span class="px-2 py-0.5 rounded text-[12px] font-medium bg-quiet-zinc text-secondary-ink border border-whisper-border">
+            Closed
+          </span>
+</div>
+<div class="pt-2 pl-7 flex items-center">
+<button class="inline-flex items-center gap-1.5 text-sm font-medium text-muted-teal active:opacity-80 py-1" type="button">
+<span>View archive summary</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Privacy & Reassurance Note -->
+<!-- Footer Disclaimer -->
+<footer class="pt-2 pb-2 text-center">
+<p class="font-body-sm text-body-sm text-secondary-ink font-medium">
+        Demo only · No real services contacted
+      </p>
+</footer>
+</main>
+<!-- Bottom Navigation Bar (Shared Anchor Component) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-surface-white border-t border-whisper-border">
+<div class="max-w-md mx-auto px-6 py-2 flex justify-around items-center">
+<!-- Nav Item: Home -->
+<a class="flex flex-col items-center justify-center text-secondary-ink px-3 py-1 active:scale-[0.96] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="emergency">emergency</span>
+<span class="text-[12px] font-medium mt-0.5">Home</span>
+</a>
+<!-- Nav Item: Activity (ACTIVE STATE) -->
+<a aria-current="page" class="flex flex-col items-center justify-center text-primary bg-teal-wash rounded-full px-4 py-1.5 active:scale-[0.96] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[24px] text-muted-teal" data-icon="history" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="text-[12px] font-semibold text-muted-teal mt-0.5">Activity</span>
+</a>
+<!-- Nav Item: Profile -->
+<a class="flex flex-col items-center justify-center text-secondary-ink px-3 py-1 active:scale-[0.96] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="person">person</span>
+<span class="text-[12px] font-medium mt-0.5">Profile</span>
+</a>
+</div>
+</nav>
+</body></html>

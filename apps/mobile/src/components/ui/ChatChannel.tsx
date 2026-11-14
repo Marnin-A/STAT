@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { ChatMessage } from '@stat/shared'
+import type { ChatMessage } from '../../types/ui'
 
 interface ChatChannelProps {
   messages: ChatMessage[]

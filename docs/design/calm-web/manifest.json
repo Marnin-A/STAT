@@ -1,0 +1,235 @@
+{
+  "date": "2026-10-28",
+  "status": "draft-review-only-not-implementation",
+  "project": "projects/4730804965782160371",
+  "historicalProject": "projects/15243493749593154645",
+  "approvedDesignSystem": "assets/48c5ebe58c8042dca83a81172b60930a",
+  "screenCount": 9,
+  "stitchExports": 8,
+  "manualFallbacks": 1,
+  "projectCanvasListing": "Returned DESIGN.md only; do not assume all generated screens are visible on the Stitch canvas. Use local exports.",
+  "screens": [
+    {
+      "key": "01-home-refined",
+      "title": "Home",
+      "description": "Anonymous SOS, optional location, Medical ID shortcut",
+      "device": "mobile",
+      "provenance": "stitch",
+      "screen": "projects/4730804965782160371/screens/ff9265e0a5134f699287ca56f9aa831e",
+      "htmlFile": "projects/4730804965782160371/files/bd68d6c5b0b842f9b8d1929217e9711b",
+      "screenshotFile": "projects/4730804965782160371/files/d2ed179c3855481caf12b46684dcdc2b",
+      "localHtml": "drafts/01-home-refined.html",
+      "localImage": "drafts/01-home-refined.png"
+    },
+    {
+      "key": "02-active-awaiting-dispatch",
+      "title": "Request received",
+      "description": "Acknowledged intake; no responder assigned yet",
+      "device": "mobile",
+      "provenance": "stitch",
+      "screen": "projects/4730804965782160371/screens/e5a59e53e5984bf9a9894c8add42d7cc",
+      "htmlFile": "projects/4730804965782160371/files/ffb5677d30df487ab6ae5cdee1bef351",
+      "screenshotFile": "projects/4730804965782160371/files/de9cc5090cd741e88ab319a1a52b9b32",
+      "localHtml": "drafts/02-active-awaiting-dispatch.html",
+      "localImage": "drafts/02-active-awaiting-dispatch.png"
+    },
+    {
+      "key": "03-delivery-uncertain",
+      "title": "Delivery not confirmed",
+      "description": "Uncertain delivery is not success or a dispatch promise",
+      "device": "mobile",
+      "provenance": "stitch",
+      "screen": "projects/4730804965782160371/screens/35b69640ffbe44eba6167976a5e30457",
+      "htmlFile": "projects/4730804965782160371/files/2407bcf798fc45f1b0a8cbf2dff0840f",
+      "screenshotFile": "projects/4730804965782160371/files/d9ccd0163b3444c6810fc56ffbfbd62c",
+      "localHtml": "drafts/03-delivery-uncertain.html",
+      "localImage": "drafts/03-delivery-uncertain.png"
+    },
+    {
+      "key": "04-activity",
+      "title": "Activity",
+      "description": "Active request stays directly reachable",
+      "device": "mobile",
+      "provenance": "stitch",
+      "screen": "projects/4730804965782160371/screens/98a37bc4b7b5433f8ab5dfb400b765d8",
+      "htmlFile": "projects/4730804965782160371/files/39568700918e42ec8189f757c76b7f07",
+      "screenshotFile": "projects/4730804965782160371/files/f86eff135c0d4cc3bf6880b59b238c27",
+      "localHtml": "drafts/04-activity.html",
+      "localImage": "drafts/04-activity.png"
+    },
+    {
+      "key": "05-profile-signed-out",
+      "title": "Profile · signed out",
+      "description": "Saving medical information requires sign-in; SOS does not",
+      "device": "mobile",
+      "provenance": "stitch",
+      "screen": "projects/4730804965782160371/screens/1b363282c94a4c8bbc480bc7cbfe54fe",
+      "htmlFile": "projects/4730804965782160371/files/493f01854ff04f20b85d032487500704",
+      "screenshotFile": "projects/4730804965782160371/files/fc521ba3018d442ab6f8262210bf8f65",
+      "localHtml": "drafts/05-profile-signed-out.html",
+      "localImage": "drafts/05-profile-signed-out.png"
+    },
+    {
+      "key": "06-medical-id-contacts",
+      "title": "Medical ID & contacts",
+      "description": "Self-reported information and incident-scoped sharing",
+      "device": "mobile",
+      "provenance": "stitch",
+      "screen": "projects/4730804965782160371/screens/ef755c062fa84412a45178e4a0c141f3",
+      "htmlFile": "projects/4730804965782160371/files/8eb5287e97ff4828bfc0635f5784e28b",
+      "screenshotFile": "projects/4730804965782160371/files/7b21dc0d70154ec8ad03853b0b841e57",
+      "localHtml": "drafts/06-medical-id-contacts.html",
+      "localImage": "drafts/06-medical-id-contacts.png"
+    },
+    {
+      "key": "07-responder-task",
+      "title": "Responder task",
+      "description": "Assigned case, next action, incident notes",
+      "device": "mobile",
+      "provenance": "stitch",
+      "screen": "projects/4730804965782160371/screens/88a5c0b77c7b426a817467545a890aed",
+      "htmlFile": "projects/4730804965782160371/files/e666d99c41e34bdda5595cba03ba92ae",
+      "screenshotFile": "projects/4730804965782160371/files/1231e8223ac646aa8cc8b4edad2b510b",
+      "localHtml": "drafts/07-responder-task.html",
+      "localImage": "drafts/07-responder-task.png"
+    },
+    {
+      "key": "08-dispatcher-intake",
+      "title": "Dispatcher intake",
+      "description": "Human approval; illustrative AI and review flags",
+      "device": "desktop",
+      "provenance": "stitch",
+      "screen": "projects/4730804965782160371/screens/4ecb7a52428b4e2fb0dd44103860e02a",
+      "htmlFile": "projects/4730804965782160371/files/565b34402c244f0b9840e40756168e53",
+      "screenshotFile": "projects/4730804965782160371/files/1922db521b0f4fa9bf3b3efe3b37d219",
+      "localHtml": "drafts/08-dispatcher-intake.html",
+      "localImage": "drafts/08-dispatcher-intake.png"
+    },
+    {
+      "key": "09-hospital-preparation",
+      "title": "Hospital preparation",
+      "description": "Hand-authored fallback after Stitch transport failure",
+      "device": "desktop",
+      "provenance": "hand-authored-fallback",
+      "screen": null,
+      "htmlFile": null,
+      "screenshotFile": null,
+      "localHtml": "drafts/09-hospital-preparation.html",
+      "localImage": null
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "drafts/01-home-refined.html",
+      "bytes": 14660,
+      "sha256": "80b6589e622a38e01bcedfb2ec34aa98a8dea9bdbe071a56f569ee7fd5c44810"
+    },
+    {
+      "path": "drafts/01-home-refined.png",
+      "bytes": 133392,
+      "sha256": "09abc1a6870013cced1df8056c71c306d959fbb0b9f7d74d0051ae5b8a274448",
+      "width": 780,
+      "height": 1768
+    },
+    {
+      "path": "drafts/02-active-awaiting-dispatch.html",
+      "bytes": 18234,
+      "sha256": "a57b65832f60694e9e22de6b8ad8d226b8f65731f4d68f6a60cc97016b0cb5a2"
+    },
+    {
+      "path": "drafts/02-active-awaiting-dispatch.png",
+      "bytes": 265647,
+      "sha256": "c49db7844f7b3de588748dc9b1eb55930d16a01e328a9e90db39276ba2122c4d",
+      "width": 780,
+      "height": 2594
+    },
+    {
+      "path": "drafts/03-delivery-uncertain.html",
+      "bytes": 10813,
+      "sha256": "8dd75136e86cedf50b2f3919727b1dc67f3d0b4bf3dada7ff1528a938d97dc1f"
+    },
+    {
+      "path": "drafts/03-delivery-uncertain.png",
+      "bytes": 111338,
+      "sha256": "16e302185e2c29d5ab418edd32d7f614b0a5fe23dcec17af9b317736e81286dc",
+      "width": 780,
+      "height": 1768
+    },
+    {
+      "path": "drafts/04-activity.html",
+      "bytes": 11023,
+      "sha256": "398d28d13eb2e9bc75593c360fe730d98aa21c5b6492b3cd98c839e099b3e515"
+    },
+    {
+      "path": "drafts/04-activity.png",
+      "bytes": 140202,
+      "sha256": "663163a1bc3e58a627897005be16aae2767124a89dc75a33916649538ec586a0",
+      "width": 780,
+      "height": 1768
+    },
+    {
+      "path": "drafts/05-profile-signed-out.html",
+      "bytes": 16411,
+      "sha256": "c405c7c9025e8f4c1bf81677f5231bd4a6c65df9b9eb4be3b878bf53f217dcf6"
+    },
+    {
+      "path": "drafts/05-profile-signed-out.png",
+      "bytes": 236479,
+      "sha256": "4a23c073e039810af566ed49d692a957a94dd2c82c7a343f5e0effbb42177991",
+      "width": 780,
+      "height": 2664
+    },
+    {
+      "path": "drafts/06-medical-id-contacts.html",
+      "bytes": 11581,
+      "sha256": "ae54cee7b9459425248f464ab68e06b90e01a7bdb38d2b601409677a8f40bd8e"
+    },
+    {
+      "path": "drafts/06-medical-id-contacts.png",
+      "bytes": 213260,
+      "sha256": "8c03b84995cd404e03b988650fe8ea490019c628a5bb2641fc7cb10429802003",
+      "width": 780,
+      "height": 2502
+    },
+    {
+      "path": "drafts/07-responder-task.html",
+      "bytes": 13957,
+      "sha256": "6e1517350c6c1b1ae2bfa0f337d74fec8180b9b4be88254fcd8a8f43ae76ce5c"
+    },
+    {
+      "path": "drafts/07-responder-task.png",
+      "bytes": 317162,
+      "sha256": "e72b3787689f399e9e69caa89a9618c83899b2fdfb9a655de2ee2e84b8f2cef9",
+      "width": 2560,
+      "height": 2502
+    },
+    {
+      "path": "drafts/08-dispatcher-intake.html",
+      "bytes": 20376,
+      "sha256": "c392bf8691466eb6abf6278e629704e0ba0092d32eb57de72816afc5368946f6"
+    },
+    {
+      "path": "drafts/08-dispatcher-intake.png",
+      "bytes": 501434,
+      "sha256": "927c55ebc20bead6563e9e3302dc9efcb25cd344f40a9d274012e4a020656291",
+      "width": 2560,
+      "height": 2372
+    },
+    {
+      "path": "drafts/09-hospital-preparation.html",
+      "bytes": 7136,
+      "sha256": "dd6fd10756ce234e6ebea812540ea99b4a3f49e6552933d22316a8582f30c676"
+    },
+    {
+      "path": "drafts/review.html",
+      "bytes": 7725,
+      "sha256": "bb2db10de6a8b577c6ca8b3ed7add43f904f2bfb51601eaf93dcbc981ea7eb8b"
+    }
+  ],
+  "knownGaps": [
+    "Active-request draft still has unapproved queue-order/telemetry wording; edit attempt failed. Do not accept it as an implementation baseline.",
+    "Hospital is hand-authored HTML after a transport failure; its render remains unverified.",
+    "Live browser control timed out; responsive/keyboard/runtime contrast/interaction checks remain unverified.",
+    "A narrower responder refinement was rejected for highlighting En route before Start response; original consistent draft retained."
+  ]
+}

@@ -1,3 +1,4 @@
+import { useDemo } from "../demo/DemoProvider";
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useApi } from "../api/ApiProvider";
@@ -17,6 +18,9 @@ function readPending(): Pending | null {
   }
 }
 export function Dashboard() {
+  const demo = useDemo();
+  const journey = demo?.api.journey();
+  const walkthroughActive = Boolean(journey?.incident && !["resolved", "cancelled"].includes(journey.incident.status));
   const api = useApi(),
     navigate = useNavigate(),
     deviceId = useDeviceId();
@@ -102,7 +106,9 @@ export function Dashboard() {
       <button
         className="action-panel"
         onClick={submit}
-        disabled={submitting || !deviceId}
+        disabled={submitting || !deviceId || walkthroughActive}
+        id={!walkthroughActive && demo ? "demo-next-action" : undefined}
+        aria-describedby={demo ? "demo-next-instruction" : undefined}
         aria-label={uncertain ? "Retry same request" : "Request medical help"}
       >
         <span className="action-orbit" />
@@ -136,6 +142,7 @@ export function Dashboard() {
           </span>
         </span>
       </button>
+      {walkthroughActive && <Link className="shortcut" to="/demo#demo-next-action">Continue the current walkthrough</Link>}
       {storageWarning && (
         <p role="status">
           This browser cannot preserve the pending request after closing. Keep

@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
+import { useDemo } from "../demo/DemoProvider";
 export function Activity() {
+  const demo = useDemo();
   let id: string | null = null;
   try {
     id = sessionStorage.getItem("stat_active_incident_id");
   } catch {
     // Restricted browsers must still expose a safe path back to SOS.
   }
+  if (demo) id = demo.api.snapshot().requests.slice(-1)[0]?.[1] ?? "demo-medical-active";
   return (
     <>
       <section className="intro">

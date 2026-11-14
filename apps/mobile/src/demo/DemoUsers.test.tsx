@@ -87,7 +87,7 @@ it("clears an uncertain request from the mounted Home view on persona switch and
     expect(
       await screen.findByRole("button", { name: "Retry same request" }),
     ).toBeInTheDocument();
-    await userEvent.click(screen.getByText(/Synthetic demo users/));
+    await userEvent.click(screen.getByRole("button", { name: "Demo tools" }));
     await userEvent.selectOptions(
       screen.getByLabelText("Demo persona"),
       "responder",
@@ -101,6 +101,7 @@ it("clears an uncertain request from the mounted Home view on persona switch and
     expect(
       await screen.findByRole("button", { name: "Retry same request" }),
     ).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Demo tools" }));
     await userEvent.click(
       screen.getByRole("button", { name: "Reset demo data" }),
     );

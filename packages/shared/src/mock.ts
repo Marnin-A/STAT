@@ -22,6 +22,7 @@ import type {
   TriageQuestion,
   TriageScore,
   Unit,
+  UnitStatus,
   UnitQuery,
 } from './types'
 
@@ -130,6 +131,15 @@ function seedIncident(over: Partial<Incident>): Incident {
   }
 }
 
+export interface MockSnapshot {
+  incidents: Incident[]
+  units: Unit[]
+  hospitals: Hospital[]
+  dispatches?: Dispatch[]
+  triage?: [string, TriageAnswer[]][]
+  telemetry?: [string, TelemetrySample[]][]
+}
+
 export class MockApiClient implements ApiClient {
   private incidents: Incident[] = [
     seedIncident({
@@ -229,14 +239,33 @@ export class MockApiClient implements ApiClient {
   private replayed = new Set<string>()
 
   /** Explicit synthetic scenarios; omitted preserves legacy test fixtures. */
-  constructor(seed?: { incidents: Incident[]; units: Unit[]; hospitals: Hospital[]; dispatches?: Dispatch[] }) {
+  constructor(seed?: MockSnapshot) {
     if (seed) {
       const copy = JSON.parse(JSON.stringify(seed)) as NonNullable<typeof seed>
       this.incidents = copy.incidents
       this.units = copy.units
       this.hospitals = copy.hospitals
       this.dispatches = copy.dispatches ?? []
+      this.triage = new Map(copy.triage ?? [])
+      this.telemetry = new Map(copy.telemetry ?? [])
     }
+  }
+
+  /** Detached synthetic state; never includes a backend session or credentials. */
+  exportSnapshot(): MockSnapshot {
+    return JSON.parse(JSON.stringify({
+      incidents: this.incidents, units: this.units, hospitals: this.hospitals,
+      dispatches: this.dispatches, triage: [...this.triage], telemetry: [...this.telemetry],
+    }))
+  }
+
+  /** Synthetic fleet control; backend unit commands use their own API. */
+  setUnitStatus(unitId: string, status: UnitStatus): Unit {
+    const unit = this.units.find(u => u.id === unitId)
+    if (!unit) throw new Error(`unit ${unitId} not found`)
+    unit.status = status
+    unit.updatedAt = now()
+    return { ...unit }
   }
 
   private find(incidentId: string): Incident {
@@ -291,10 +320,10 @@ export class MockApiClient implements ApiClient {
     return this.touch(incident)
   }
 
-  async addIncidentNote(incidentId: string, text: string): Promise<IncidentNote> {
+  async addIncidentNote(incidentId: string, text: string, actorId = 'mock-user'): Promise<IncidentNote> {
     await delay(100)
     const incident = this.find(incidentId)
-    const note: IncidentNote = { id: id(), actorId: 'mock-user', text, at: now() }
+    const note: IncidentNote = { id: id(), actorId, text, at: now() }
     incident.notes = [...incident.notes, note]
     this.touch(incident)
     return note
@@ -320,6 +349,7 @@ export class MockApiClient implements ApiClient {
     incidentId: string,
     unitId: string,
     _expectedVersion: number,
+    dispatcherId = 'mock-dispatcher',
   ): Promise<Dispatch> {
     await delay()
     const incident = this.find(incidentId)
@@ -334,7 +364,7 @@ export class MockApiClient implements ApiClient {
       id: id(),
       incidentId,
       unitId,
-      dispatcherId: 'mock-dispatcher',
+      dispatcherId,
       status: 'pending',
       dispatchedAt: now(),
       acceptedAt: null,

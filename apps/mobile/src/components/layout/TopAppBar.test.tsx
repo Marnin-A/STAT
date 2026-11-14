@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { it, expect } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 import { TopAppBar } from "./TopAppBar";
 it("shows branding and guest access without an unverified emergency phone link", () => {
-  render(<TopAppBar />);
+  render(<MemoryRouter><TopAppBar /></MemoryRouter>);
   expect(screen.getByRole("link", { name: "STAT Home" })).toHaveAttribute(
     "href",
     "/",

@@ -7,6 +7,7 @@
   --ink: #292438;
   --muted: #625c6d;
   --primary: #352842;
+  --demo-accent: #f4ce49;
   --primary-hover: #493657;
   --on-primary: #fffefa;
   --lilac: #ded1f0;
@@ -787,3 +788,91 @@ button:disabled {
   padding-block: 12px;
   border-bottom: 1px solid var(--line);
 }
+
+/* Connected synthetic workflow; reuse the calm application tokens. */
+.demo-case { margin-block: 20px; }
+.demo-case h2 { margin-block: 8px; }
+.case-id { font-size: 12px; overflow-wrap: anywhere; color: var(--muted); }
+.demo-guide { margin-bottom: 24px; }
+.demo-guide p + p { margin-top: 12px; }
+.demo-actions { display: grid; gap: 12px; margin-top: 20px; }
+.demo-actions .secondary-action { width: 100%; }
+.demo-form { display: grid; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+.demo-form label { display: grid; gap: 8px; font-weight: 600; }
+.demo-form input, .demo-form textarea { width: 100%; min-height: 48px; padding: 12px; border: 1px solid var(--muted); border-radius: 12px; background: var(--surface); color: var(--ink); font: inherit; }
+.demo-form textarea { min-height: 96px; resize: vertical; }
+.demo-form input:focus-visible, .demo-form textarea:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.demo-timeline { margin-top: 24px; }
+.demo-timeline summary { min-height: 48px; cursor: pointer; padding-block: 12px; }
+.timeline-entry { padding-block: 16px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.timeline-entry p { margin-block: 8px; }
+.demo-handoff { padding: 12px; border-radius: 12px; background: var(--lilac); margin-block: 16px; }
+.fleet-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-block: 16px; border-bottom: 1px solid var(--line); }
+
+.demo-next-step {
+  margin-bottom: 20px;
+  padding: 24px;
+  border: 2px solid var(--primary);
+  border-radius: var(--radius);
+  background: var(--lilac-wash);
+  display: grid;
+  gap: 12px;
+}
+.demo-next-step progress { width: 100%; height: 8px; accent-color: var(--primary); }
+.demo-next-step .case-id { display: block; }
+.demo-next-action.secondary-action {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--on-primary);
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+.demo-next-action.secondary-action:hover { background: var(--primary-hover); }
+#demo-next-action { scroll-margin-block: 24px; }
+.demo-vitals-step { border: 2px solid var(--primary); border-radius: 16px; padding: 16px; background: var(--lilac-wash); }
+.demo-sample-cases { margin-block: 24px; }
+.demo-sample-cases > summary { min-height: 48px; padding-block: 12px; }
+.demo-next-step progress::-webkit-progress-bar { background: var(--line); border-radius: 8px; }
+.demo-next-step progress::-webkit-progress-value { background: var(--primary); border-radius: 8px; }
+.demo-next-step progress::-moz-progress-bar { background: var(--primary); border-radius: 8px; }
+
+.demo-launcher {
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 20;
+  min-height: 48px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--primary);
+  background: var(--demo-accent);
+  color: var(--ink);
+  box-shadow: 0 4px 20px #29243830;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+}
+.demo-launcher span { font-size: 12px; font-weight: 400; }
+.demo-popup-backdrop { position: fixed; inset: 0; z-index: 50; background: #29243855; }
+.demo-popup {
+  position: absolute;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--canvas);
+  box-shadow: 0 12px 48px #29243840;
+  overflow: hidden;
+}
+.demo-popup-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+.demo-popup-header .secondary-action { width: auto; min-height: 48px; margin: 0; padding: 8px 16px; }
+.demo-popup-content { padding: 16px; overflow-y: auto; overscroll-behavior: contain; }
+.demo-popup-content .demo-next-step { padding: 20px; }
+.demo-popup-content .demo-controls { margin-bottom: 0; }
+@media (max-width: 600px) { .demo-launcher { bottom: max(104px, calc(88px + env(safe-area-inset-bottom))); } }

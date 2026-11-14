@@ -2,6 +2,7 @@
   "name": "stat",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.20.0",
   "scripts": {
     "dev": "pnpm --filter @stat/mobile dev",
     "dev:api": "pnpm --filter @stat/api dev",
@@ -13,7 +14,7 @@
     "cap:open": "pnpm --filter @stat/mobile cap:open"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": "22.x",
     "pnpm": ">=8.0.0"
   }
 }

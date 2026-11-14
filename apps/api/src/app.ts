@@ -100,8 +100,17 @@ const PRIORITY_SET: ReadonlySet<string> = new Set(["critical", "serious", "stabl
 // protocol says otherwise: over-triage is recoverable, under-triage is not.
 const DEFAULT_PRIORITY: Priority = "critical";
 
-export function buildApp(deps: AppDeps = defaultDeps()): FastifyInstance {
-  const app = Fastify({ logger: false });
+export function buildApp(deps: AppDeps = defaultDeps(), options: { apiPrefix?: string } = {}): FastifyInstance {
+  const app = Fastify({
+    logger: false,
+    rewriteUrl(request) {
+      const url = request.url ?? "/";
+      const prefix = options.apiPrefix;
+      if (!prefix) return url;
+      if (url === prefix || url.startsWith(prefix + "?")) return "/" + url.slice(prefix.length);
+      return url.startsWith(prefix + "/") ? url.slice(prefix.length) : url;
+    },
+  });
   const { incidents, dispatch, units, triage, telemetry, replay, hospital, hospitals, audit, idempotency, bus, lag, idGen, clock } = deps;
   app.register(websocket);
 
